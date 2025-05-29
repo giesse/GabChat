@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GabChat</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+</head>
+<body>
+    <div id="auth-container">
+        <button id="google-signin-button">Sign in with Google</button>
+    </div>
+
+    <div id="user-info" style="display: none;">
+        <p>Welcome, <span id="user-name"></span>!</p>
+        <button id="logout-button">Logout</button>
+    </div>
+
+    <div id="chat-container" style="display: none;">
+        <h2>Chat</h2>
+        <div id="chat-history">
+            <!-- Chat messages will appear here -->
+        </div>
+        <input type="text" id="message-input" placeholder="Type your message...">
+        <button id="send-button">Send</button>
+    </div>
+
+    <div id="api-key-container" style="display: none;">
+        <h3>Enter your Gemini API Key</h3>
+        <input type="text" id="api-key-input" placeholder="Gemini API Key">
+        <button id="save-api-key-button">Save Key</button>
+    </div>
+
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyBRS6_fValVt0ZPtcLykcfcuZe2UYOEGHo",
+          authDomain: "gabchat-e1851.firebaseapp.com",
+          projectId: "gabchat-e1851",
+          storageBucket: "gabchat-e1851.firebasestorage.app",
+          messagingSenderId: "28310426932",
+          appId: "1:28310426932:web:6aeec20e5dfdf84c18c161"
+        };
+
+        // Initialize Firebase
+        // Note: In the provided snippet, firebase.initializeApp is used.
+        // However, with the modular SDK (v9+), the syntax is different.
+        // We'll keep the older syntax for now as it matches the existing script tags.
+        // If you intend to use the modular SDK, the script tags and initialization need to be updated.
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Google Sign-In
+        const googleSignInButton = document.getElementById('google-signin-button');
+        googleSignInButton.addEventListener('click', () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log("User signed in: ", user);
+                    
+                    // Get the ID token
+                    user.getIdToken().then((idToken) => {
+                        // Send token to backend for verification
+                        fetch('/verify-token', { 
+                            method: 'POST', 
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({token: idToken})
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Token verification response: ", data);
+                            if(data.status === "success"){
+                                // Update UI
+                                document.getElementById('auth-container').style.display = 'none';
+                                document.getElementById('user-info').style.display = 'block';
+                                document.getElementById('user-name').textContent = user.displayName;
+                                document.getElementById('chat-container').style.display = 'block';
+                                document.getElementById('api-key-container').style.display = 'block';
+                            } else {
+                                console.error("Token verification failed: ", data.error);
+                                // Handle failed verification on client side if needed
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error sending token to backend: ", error);
+                        });
+                    });
+                })
+                .catch((error) => {
+                    console.error("Google Sign-In Error: ", error);
+                });
+        });
+
+        // Logout
+        const logoutButton = document.getElementById('logout-button');
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                console.log("User signed out.");
+                // Update UI
+                document.getElementById('auth-container').style.display = 'block';
+                document.getElementById('user-info').style.display = 'none';
+                document.getElementById('chat-container').style.display = 'none';
+                document.getElementById('api-key-container').style.display = 'none';
+            }).catch((error) => {
+                console.error("Logout Error: ", error);
+            });
+        });
+
+        // Placeholder for API key saving and chat message sending
+        // JavaScript for sign-in, chat, and API key management will go here
+    </script>
+</body>
+</html>
