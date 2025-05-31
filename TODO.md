@@ -32,8 +32,8 @@
         *   Display the chat history (user messages and AI responses) in the UI.
 8.  **Automated Testing:**
     *   **Backend Focus First:**
-        *   Set up and configure the Firebase Emulator Suite (Auth, Firestore if used).
-        *   Develop backend unit/integration tests for `main.py` (especially `/verify-token` and API key logic).
+        *   Set up and configure the Firebase Emulator Suite (Auth, Firestore if used). (DONE - Emulator config, startup script, test dependencies added)
+        *   Develop backend unit/integration tests for `main.py` (especially `/verify-token` and API key logic). (IN PROGRESS - Test structure created)
     *   **(Future Task) Implement E2E UI tests:** For the authentication flow and core chat functionality using a framework like Playwright or Cypress.
 
 ## Next Immediate Tasks
@@ -50,15 +50,15 @@
 
 ## Subsequent Tasks (Focus for next steps)
 
-*   **Automated Backend Testing Setup & Implementation:**
-    *   **Install Firebase CLI:** If not already installed, run `npm install -g firebase-tools`.
-    *   **Initialize Firebase Emulators:** Run `firebase init emulators` and select "Authentication" (and "Firestore" if you decide to use it for API key storage). Configure ports if necessary.
-    *   **Create a `firebase.json` configuration (if not already present/correct):** Ensure it correctly configures the emulators.
-    *   **Script for Starting Emulators:** Create a helper script (e.g., `start-emulators.sh`) to run `firebase emulators:start --only auth` (or `firebase emulators:start --only auth,firestore`).
-    *   **Add Test Dependencies to `requirements.txt`**: Add `pytest` and `mock`.
-    *   **Create Test Directory Structure:** e.g., `tests/backend`.
+*   **Automated Backend Testing Implementation:** (Setup is complete)
+    *   ~~**Install Firebase CLI:** If not already installed, run `npm install -g firebase-tools`.~~ (DONE - Assumed for subsequent steps)
+    *   ~~**Initialize Firebase Emulators:** Run `firebase init emulators` and select "Authentication" (and "Firestore" if you decide to use it for API key storage). Configure ports if necessary.~~ (DONE - `firebase.json` created)
+    *   ~~**Create a `firebase.json` configuration (if not already present/correct):** Ensure it correctly configures the emulators.~~ (DONE)
+    *   ~~**Script for Starting Emulators:** Create a helper script (e.g., `start-emulators.sh`) to run `firebase emulators:start --only auth` (or `firebase emulators:start --only auth,firestore`).~~ (DONE)
+    *   ~~**Add Test Dependencies to `requirements.txt`**: Add `pytest` and `mock`.~~ (DONE)
+    *   ~~**Create Test Directory Structure:** e.g., `tests/backend`.~~ (DONE)
     *   **Implement Backend Unit/Integration Tests (`tests/backend`):** (Detailed Plan Below)
-*   **Gemini API Key Management:** 
+*   **Gemini API Key Management:**
     *   Implement UI for API key input in `src/index.html` (already has placeholder elements).
     *   Create backend endpoint in `main.py` to securely store API keys (e.g., associated with Firebase UID. Consider Firestore or other database).
     *   Implement JavaScript in `src/index.html` to send the API key to the backend.

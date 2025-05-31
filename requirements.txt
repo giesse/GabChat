@@ -5,3 +5,7 @@ autopep8
 # App
 flask
 firebase-admin
+
+# Testing
+pytest
+mock
