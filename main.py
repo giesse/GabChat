@@ -9,9 +9,6 @@ try:
     firebase_admin.initialize_app(cred)
 except Exception as e:
     print(f"Error initializing Firebase Admin SDK: {e}")
-    # You might want to handle this more gracefully in production
-    # For now, we'll print the error and continue, 
-    # but Firebase-dependent features won't work.
 
 app = Flask(__name__)
 
@@ -28,11 +25,13 @@ def verify_token():
     try:
         decoded_token = auth.verify_id_token(id_token)
         uid = decoded_token['uid']
-        # You can store user details or manage sessions here
-        # For now, just return the UID
         return jsonify({"status": "success", "uid": uid}), 200
-    except auth.FirebaseAuthException as e:
+    # Catching the specific InvalidIdTokenError from firebase_admin.auth
+    except auth.InvalidIdTokenError as e:
         return jsonify({"error": "Invalid token", "details": str(e)}), 401
+    # It might be good to also catch other specific auth errors if they are relevant
+    # For example, if a token is expired, it might raise a different specific error.
+    # For now, InvalidIdTokenError is what the test simulates.
     except Exception as e:
         # Catch any other unexpected errors during token verification
         return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500

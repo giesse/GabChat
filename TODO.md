@@ -33,7 +33,7 @@
 8.  **Automated Testing:**
     *   **Backend Focus First:**
         *   Set up and configure the Firebase Emulator Suite (Auth, Firestore if used). (DONE - Emulator config, startup script, test dependencies added)
-        *   Develop backend unit/integration tests for `main.py` (especially `/verify-token` and API key logic). (IN PROGRESS - Test structure created)
+        *   Develop backend unit/integration tests for `main.py` (especially `/verify-token` and API key logic). (DONE - `/verify-token` tests implemented and passing)
     *   **(Future Task) Implement E2E UI tests:** For the authentication flow and core chat functionality using a framework like Playwright or Cypress.
 
 ## Next Immediate Tasks
@@ -57,7 +57,7 @@
     *   ~~**Script for Starting Emulators:** Create a helper script (e.g., `start-emulators.sh`) to run `firebase emulators:start --only auth` (or `firebase emulators:start --only auth,firestore`).~~ (DONE)
     *   ~~**Add Test Dependencies to `requirements.txt`**: Add `pytest` and `mock`.~~ (DONE)
     *   ~~**Create Test Directory Structure:** e.g., `tests/backend`.~~ (DONE)
-    *   **Implement Backend Unit/Integration Tests (`tests/backend`):** (Detailed Plan Below)
+    *   ~~**Implement Backend Unit/Integration Tests (`tests/backend`):**~~ (DONE - `/verify-token` tests implemented and passing) 
 *   **Gemini API Key Management:**
     *   Implement UI for API key input in `src/index.html` (already has placeholder elements).
     *   Create backend endpoint in `main.py` to securely store API keys (e.g., associated with Firebase UID. Consider Firestore or other database).
@@ -74,18 +74,18 @@
 *   **Goal:** Test the Flask API endpoints in `main.py`, especially token verification and any logic related to API key management.
 *   **Tools:** `pytest`, `mock` (for mocking Firebase Admin SDK calls).
 *   **Steps:**
-    *   **Test `/verify-token` endpoint:**
-        *   Write tests that simulate requests with:
-            *   A valid ID token (mock `auth.verify_id_token()` to return a valid user).
-            *   An invalid/expired ID token (mock `auth.verify_id_token()` to raise an exception).
-            *   No ID token.
-        *   Assert that the responses are correct (e.g., status codes, JSON payloads).
+    *   **Test `/verify-token` endpoint:** (DONE)
+        *   ~~Write tests that simulate requests with:~~ (DONE)
+            *   ~~A valid ID token (mock `auth.verify_id_token()` to return a valid user).~~ (DONE)
+            *   ~~An invalid/expired ID token (mock `auth.verify_id_token()` to raise an exception).~~ (DONE)
+            *   ~~No ID token.~~ (DONE)
+        *   ~~Assert that the responses are correct (e.g., status codes, JSON payloads).~~ (DONE)
     *   **(Future - When API Key storage is implemented)** Test API key storage/retrieval endpoints:
         *   Test successful storage of an API key for an authenticated user.
         *   Test retrieval of an API key for an authenticated user.
         *   Test that unauthenticated users cannot store/retrieve keys.
         *   Test that users cannot access other users' keys.
-    *   **Setup/Teardown:** Use `pytest` fixtures to set up the Flask test client and any necessary mocks before each test.
+    *   **Setup/Teardown:** ~~Use `pytest` fixtures to set up the Flask test client and any necessary mocks before each test.~~ (DONE - Fixture implemented and used)
 
 ### 2. Frontend End-to-End (E2E) Tests (`tests/e2e`) - (Future Task)
 
