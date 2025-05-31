@@ -4,9 +4,8 @@
     <title>GabChat</title>
     <link rel="stylesheet" href="style.css">
     <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <!-- Add Firebase products that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <!-- We are using the modular SDK, so no -compat scripts are needed here. -->
+    <!-- The import statements in the script block will handle loading the SDK parts. -->
 </head>
 <body>
     <div id="auth-container">
@@ -33,7 +32,11 @@
         <button id="save-api-key-button">Save Key</button>
     </div>
 
-    <script>
+    <script type="module">
+        // Import functions from the Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
         // Your web app's Firebase configuration
         const firebaseConfig = {
           apiKey: "AIzaSyBRS6_fValVt0ZPtcLykcfcuZe2UYOEGHo",
@@ -45,19 +48,19 @@
         };
 
         // Initialize Firebase
-        // Note: In the provided snippet, firebase.initializeApp is used.
-        // However, with the modular SDK (v9+), the syntax is different.
-        // We'll keep the older syntax for now as it matches the existing script tags.
-        // If you intend to use the modular SDK, the script tags and initialization need to be updated.
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
         // Google Sign-In
         const googleSignInButton = document.getElementById('google-signin-button');
         googleSignInButton.addEventListener('click', () => {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider)
                 .then((result) => {
+                    // This gives you a Google Access Token. You can use it to access the Google API.
+                    // const credential = GoogleAuthProvider.credentialFromResult(result);
+                    // const token = credential.accessToken;
+                    // The signed-in user info.
                     const user = result.user;
                     console.log("User signed in: ", user);
                     
@@ -75,12 +78,7 @@
                         .then(data => {
                             console.log("Token verification response: ", data);
                             if(data.status === "success"){
-                                // Update UI
-                                document.getElementById('auth-container').style.display = 'none';
-                                document.getElementById('user-info').style.display = 'block';
-                                document.getElementById('user-name').textContent = user.displayName;
-                                document.getElementById('chat-container').style.display = 'block';
-                                document.getElementById('api-key-container').style.display = 'block';
+                                // Update UI handled by onAuthStateChanged
                             } else {
                                 console.error("Token verification failed: ", data.error);
                                 // Handle failed verification on client side if needed
@@ -93,22 +91,44 @@
                 })
                 .catch((error) => {
                     console.error("Google Sign-In Error: ", error);
+                    // const errorCode = error.code;
+                    // const errorMessage = error.message;
+                    // The email of the user's account used.
+                    // const email = error.email;
+                    // The AuthCredential type that was used.
+                    // const credential = GoogleAuthProvider.credentialFromError(error);
                 });
         });
 
         // Logout
         const logoutButton = document.getElementById('logout-button');
         logoutButton.addEventListener('click', () => {
-            auth.signOut().then(() => {
+            signOut(auth).then(() => {
                 console.log("User signed out.");
-                // Update UI
+                // Update UI handled by onAuthStateChanged
+            }).catch((error) => {
+                console.error("Logout Error: ", error);
+            });
+        });
+
+        // Listen for authentication state changes
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                console.log("onAuthStateChanged: User is signed in", user);
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('user-info').style.display = 'block';
+                document.getElementById('user-name').textContent = user.displayName;
+                document.getElementById('chat-container').style.display = 'block';
+                document.getElementById('api-key-container').style.display = 'block';
+            } else {
+                // User is signed out
+                console.log("onAuthStateChanged: User is signed out");
                 document.getElementById('auth-container').style.display = 'block';
                 document.getElementById('user-info').style.display = 'none';
                 document.getElementById('chat-container').style.display = 'none';
                 document.getElementById('api-key-container').style.display = 'none';
-            }).catch((error) => {
-                console.error("Logout Error: ", error);
-            });
+            }
         });
 
         // Placeholder for API key saving and chat message sending
