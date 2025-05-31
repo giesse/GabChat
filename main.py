@@ -23,7 +23,7 @@ except Exception as e:
     print(f"An unexpected error occurred during Firebase Admin SDK initialization: {e}")
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='src', static_url_path='')
 
 @app.route("/")
 def index():
