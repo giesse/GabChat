@@ -5,15 +5,15 @@ from unittest.mock import patch
 from firebase_admin import auth
 from main import app # Assuming your Flask app is named 'app' in main.py
 
-# Configuration for Firebase Auth Emulator (values from src/index.html)
+# Configuration for Firebase Auth Emulator
 FIREBASE_PROJECT_ID = os.getenv("FIREBASE_PROJECT_ID", "gabchat-e1851")
-FIREBASE_AUTH_EMULATOR_HOST = "localhost:9099" # From firebase.json
-FIREBASE_API_KEY = "AIzaSyBRS6_fValVt0ZPtcLykcfcuZe2UYOEGHo" # apiKey from src/index.html
+FIREBASE_AUTH_EMULATOR_HOST = "127.0.0.1:9099"
+# This is a generic API key that often works with emulators for REST calls.
+# It might not be strictly necessary for all emulator endpoints, but it's good practice for :signUp.
+EMULATOR_API_KEY = "AIzaSyA0...emulator_key" # Placeholder, can be any string for emulator
 
-@pytest.fixture(scope="session") # Changed to session scope for efficiency if multiple tests use it
+@pytest.fixture(scope="session")
 def client_with_emulator_config():
-    # This fixture ensures the main app context (if it reads env vars at startup)
-    # is aware of the emulator. It's good practice.
     original_emulator_host = os.environ.get("FIREBASE_AUTH_EMULATOR_HOST")
     os.environ["FIREBASE_AUTH_EMULATOR_HOST"] = FIREBASE_AUTH_EMULATOR_HOST
     
@@ -21,14 +21,13 @@ def client_with_emulator_config():
     with app.test_client() as client:
         yield client
     
-    # Restore original environment variable state
     if original_emulator_host is None:
         del os.environ["FIREBASE_AUTH_EMULATOR_HOST"]
     else:
         os.environ["FIREBASE_AUTH_EMULATOR_HOST"] = original_emulator_host
 
 @pytest.fixture
-def client(client_with_emulator_config): # Use the emulator-configured client for all tests by default
+def client(client_with_emulator_config):
     yield client_with_emulator_config
 
 # --- Mock Tests (existing tests) ---
@@ -59,39 +58,36 @@ def test_verify_token_no_token_mock(client):
 
 # --- Emulator Test ---
 
-# Helper function to create a user in the emulator and get an ID token
 def create_user_and_get_token_emulator(email, password):
-    create_user_url = f"http://{FIREBASE_AUTH_EMULATOR_HOST}/identitytoolkit.googleapis.com/v1/accounts?key={FIREBASE_API_KEY}"
+    # Using accounts:signUp endpoint, which is standard for Firebase Auth REST API
+    create_user_url = f"http://{FIREBASE_AUTH_EMULATOR_HOST}/identitytoolkit.googleapis.com/v1/accounts:signUp?key={EMULATOR_API_KEY}"
     payload = {"email": email, "password": password, "returnSecureToken": True}
     try:
         resp = requests.post(create_user_url, json=payload)
-        resp.raise_for_status()
+        resp.raise_for_status() # Will raise an HTTPError if the HTTP request returned an unsuccessful status code
         user_data = resp.json()
         return user_data['idToken'], user_data['localId']
     except requests.exceptions.RequestException as e:
         print(f"Error creating user in emulator: {e}. Response: {resp.text if 'resp' in locals() else 'N/A'}")
         raise
 
-# Helper function to delete a user from the emulator
 def delete_emulator_user(local_id):
-    delete_user_url = f"http://{FIREBASE_AUTH_EMULATOR_HOST}/identitytoolkit.googleapis.com/v1/accounts:delete?key={FIREBASE_API_KEY}"
+    # Using accounts:delete endpoint
+    delete_user_url = f"http://{FIREBASE_AUTH_EMULATOR_HOST}/identitytoolkit.googleapis.com/v1/accounts:delete?key={EMULATOR_API_KEY}"
     payload = {"localId": local_id}
     try:
         resp = requests.post(delete_user_url, json=payload)
         resp.raise_for_status()
     except requests.exceptions.RequestException as e:
+        # Log error but don't re-raise during cleanup
         print(f"Error deleting user {local_id} from emulator: {e}. Response: {resp.text if 'resp' in locals() else 'N/A'}")
-        # Not raising here as it's a cleanup step, but good to log
 
 @pytest.mark.emulator
-def test_verify_token_with_emulator(client): # client fixture already uses client_with_emulator_config
-    test_email = "testuser.emulator@example.com"
+def test_verify_token_with_emulator(client):
+    test_email = f"testuser.emulator.{os.urandom(4).hex()}@example.com" # Unique email to avoid collisions
     test_password = "securePassword123"
     id_token = None
     local_id = None
-
-    # Ensure emulators are running before this test
-    # You might want to add a check here or rely on CI setup
 
     try:
         id_token, local_id = create_user_and_get_token_emulator(test_email, test_password)
@@ -110,11 +106,3 @@ def test_verify_token_with_emulator(client): # client fixture already uses clien
     finally:
         if local_id:
             delete_emulator_user(local_id)
-
-# To run only emulator tests: pytest -m emulator
-# To run all tests: pytest
-
-# Placeholder for future tests related to API key management
-# def test_store_api_key_authenticated_user(client):
-#     # TODO: Implement this test when API key storage is ready
-#     pass
