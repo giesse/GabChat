@@ -11,22 +11,12 @@ db = None
 
 def initialize_firebase():
     global fb_app, db
-
-    # Determine if running in emulator mode based on env vars
-    # This helps decide if we should expect emulator-specific initialization
     in_emulator_mode = bool(os.getenv("FIREBASE_AUTH_EMULATOR_HOST") or os.getenv("FIRESTORE_EMULATOR_HOST"))
-
     try:
-        # If there's an existing default app, get it.
-        # This is important because initialize_app() will fail if one already exists.
         if firebase_admin._DEFAULT_APP_NAME in firebase_admin._apps:
             fb_app = firebase_admin.get_app()
             print(f"Using existing Firebase app: {fb_app.name}")
-            # If the existing app was not for emulators, but now emulator vars are set,
-            # this app instance might be for the wrong target (real vs emulator).
-            # The test fixture will handle deleting and re-creating the app to solve this.
         else:
-            # No default app exists, so initialize it.
             print("No default Firebase app found, attempting to initialize.")
             try:
                 cred = credentials.Certificate("firebase-service-account-key.json")
@@ -38,30 +28,23 @@ def initialize_firebase():
                     print("Firebase Admin SDK initialized for emulator without service account key.")
                 else:
                     print("Firebase Admin SDK NOT initialized (credentials not found, not emulator mode).")
-                    fb_app = None # Ensure fb_app is None
+                    fb_app = None 
             except Exception as e_init:
                 print(f"Error during Firebase Admin SDK initialize_app: {e_init}")
-                fb_app = None # Ensure fb_app is None
-
-        # Once fb_app is (or should be) established, (re)configure db client
+                fb_app = None 
         if fb_app:
             db = firestore.client(app=fb_app)
             print(f"Firestore client configured for app: {fb_app.name}, Project: {db.project}")
         else:
-            db = None # Ensure db is None if fb_app is not (or no longer) available
+            db = None 
             print("Firestore client NOT configured because Firebase App is not available.")
-
     except Exception as e:
         print(f"General error in initialize_firebase: {e}")
         fb_app = None
         db = None
 
 app = Flask(__name__, static_folder='src', static_url_path='')
-
-# Initial call for normal runs. Tests will manage re-initialization.
 initialize_firebase()
-
-# Decorator (token_required) and routes remain the same as your previous version...
 
 def token_required(f):
     @wraps(f)
@@ -165,8 +148,11 @@ def run_flask_app():
       print("Running with Firebase Emulators (exec mode) - data will persist if configured.")
     elif os.getenv("FIRESTORE_EMULATOR_HOST"):
       print(f"Running with Firestore emulator at {os.getenv('FIRESTORE_EMULATOR_HOST')}")
+    
     port = int(os.environ.get('PORT', 8080))
-    app.run(host='0.0.0.0', port=port)
+    # Respect FLASK_DEBUG environment variable for debug mode
+    flask_debug = os.environ.get('FLASK_DEBUG', 'false').lower() in ['true', '1', 't']
+    app.run(host='0.0.0.0', port=port, debug=flask_debug)
 
 if __name__ == "__main__":
     run_flask_app()
