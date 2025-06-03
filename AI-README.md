@@ -19,13 +19,23 @@ GabChat is a web application that allows users to authenticate using Firebase Go
     *   The `GET /api/gemini-key` endpoint returns `{"has_key": boolean}`.
     *   UI for API key input, status display, and deletion is implemented in `src/index.html` and `src/script.js` and is fully functional.
     *   All frontend API key operations include the Firebase ID token for authorization and handle responses correctly.
+*   **Chat Functionality (Backend):**
+    *   The `/api/chat` endpoint is implemented in `main.py`.
+    *   It requires authentication, takes a user message, retrieves the user's Gemini API key from Firestore, interacts with the Gemini API (using model `gemini-2.5-flash-preview-05-20`), and returns the AI's response.
+    *   Error handling for missing messages, empty messages, and missing API keys is included.
+*   **Chat Functionality (Frontend):**
+    *   UI elements for chat (`chat-history`, `message-input`, `send-button`) are present in `src/index.html`.
+    *   `src/script.js` handles sending messages to `/api/chat`, displaying user messages and AI responses/errors in `chat-history`.
+    *   Event listeners for send button click and Enter key press are implemented.
+    *   Chat history is cleared on logout.
 *   **Automated Backend Testing:**
     *   `pytest` is used for backend tests located in `tests/backend/test_main.py`.
-    *   All 12 tests cover `/verify-token` and all `/api/gemini-key` CRUD operations, and are **PASSING** against Firebase Emulators.
+    *   All tests cover `/verify-token`, all `/api/gemini-key` CRUD operations, and the new `/api/chat` endpoint (including various scenarios like valid requests, unauthenticated access, missing/empty messages, and no Gemini key).
+    *   All backend tests are **PASSING** against Firebase Emulators.
 
 ## Key Technologies & Decisions
 
-*   **Backend:** Python, Flask.
+*   **Backend:** Python, Flask, Google Generative AI (for Gemini - currently using `gemini-2.5-flash-preview-05-20`).
 *   **Frontend:** HTML, CSS, JavaScript (vanilla JS for now).
 *   **Authentication:** Firebase Authentication (Google Sign-In).
 *   **API Key Storage:** Firestore.
@@ -64,14 +74,9 @@ GabChat is a web application that allows users to authenticate using Firebase Go
 
 ## Next Immediate Steps (from TODO.md)
 
-1.  **Chat Functionality:**
-    *   Develop the UI for users to type messages and display chat history in `src/index.html`.
-    *   Implement JavaScript in `src/script.js` to send messages to a new backend endpoint and display responses.
-    *   Implement a new backend endpoint in `main.py` that:
-        *   Receives the user's message.
-        *   Retrieves the authenticated user's Gemini API key from Firestore.
-        *   Makes a request to the Gemini API using the key and the message.
-        *   Returns the AI's response to the frontend.
+1.  **(Future Task) Implement E2E UI tests:** For the authentication flow, API key management, and core chat functionality using a framework like Playwright or Cypress.
+2.  **(Future Task) Refine Chat UI/UX:** Improve styling, add loading indicators, better error displays, etc.
+3.  **(Future Task) Allow user to select Gemini model:** Implement UI and backend logic for model selection.
 
 ## Notes for AI Assistant
 
@@ -79,3 +84,4 @@ GabChat is a web application that allows users to authenticate using Firebase Go
 *   The local development server (`./devserver.sh`) connects to the **real Firebase project** and requires `firebase-service-account-key.json` in the project root and the Cloud Firestore API to be enabled. It does **not** use the emulators.
 *   Remember the testing command: `source .venv/bin/activate && PYTHONPATH=. python -m pytest -v tests/backend`.
 *   The `client_with_emulator_config` fixture in `tests/backend/test_main.py` is critical for ensuring Firebase Admin SDK in `main.py` uses the emulators during tests.
+*   The `google-generativeai` library has been added to `requirements.txt`.

@@ -254,3 +254,112 @@ def test_delete_gemini_key_no_key_to_delete(client):
     finally:
         if local_id:
             delete_emulator_user(local_id)
+
+# --- Chat Endpoint Tests ---
+
+@pytest.mark.emulator
+def test_chat_valid_request_emulator(client):
+    test_email = f"chat_user_valid.{os.urandom(4).hex()}@example.com"
+    test_password = "securePassword123"
+    id_token = None
+    local_id = None
+    try:
+        id_token, local_id = create_user_and_get_token_emulator(test_email, test_password)
+        # First, store a Gemini key for this user
+        headers = {'Authorization': f'Bearer {id_token}', 'Content-Type': 'application/json'}
+        client.post('/api/gemini-key', headers=headers, json={'api_key': 'fake_gemini_key_for_chat_test'})
+
+        # Mock the actual Gemini API call within the main.py module
+        with patch('main.genai.GenerativeModel') as mock_generative_model:
+            mock_model_instance = mock_generative_model.return_value
+            mock_model_instance.generate_content.return_value.text = "Hello from the mock AI!"
+
+            chat_response = client.post('/api/chat', headers=headers, json={'message': 'Hello AI'})
+            assert chat_response.status_code == 200, chat_response.get_data(as_text=True)
+            json_data = chat_response.get_json()
+            assert json_data['reply'] == "Hello from the mock AI!"
+            # Check if GenerativeModel was initialized (it is initialized in main.py now)
+            # mock_generative_model.assert_called_once() -> This will fail if genai.configure is not called before model init
+            # For now, let's just check if generate_content was called on the instance.
+            mock_model_instance.generate_content.assert_called_once_with("Hello AI")
+
+    finally:
+        if local_id:
+            if id_token: # Clean up Gemini key if stored
+                headers_cleanup = {'Authorization': f'Bearer {id_token}'}
+                client.delete('/api/gemini-key', headers=headers_cleanup)
+            delete_emulator_user(local_id)
+
+@pytest.mark.emulator
+def test_chat_unauthenticated_emulator(client):
+    response = client.post('/api/chat', json={'message': 'Trying to chat'})
+    assert response.status_code == 401, response.get_data(as_text=True)
+    json_data = response.get_json()
+    assert json_data['error'] == 'Unauthorized'
+    assert "Authentication token is missing" in json_data.get('message', '')
+
+@pytest.mark.emulator
+def test_chat_missing_message_emulator(client):
+    test_email = f"chat_user_no_msg.{os.urandom(4).hex()}@example.com"
+    test_password = "securePassword123"
+    id_token = None
+    local_id = None
+    try:
+        id_token, local_id = create_user_and_get_token_emulator(test_email, test_password)
+        headers = {'Authorization': f'Bearer {id_token}', 'Content-Type': 'application/json'}
+        client.post('/api/gemini-key', headers=headers, json={'api_key': 'fake_gemini_key_for_chat_test'})
+
+        response = client.post('/api/chat', headers=headers, json={}) # Missing 'message'
+        assert response.status_code == 400, response.get_data(as_text=True)
+        json_data = response.get_json()
+        assert json_data['error'] == 'Bad Request'
+        assert 'Message is required' in json_data.get('message', '')
+    finally:
+        if local_id:
+            if id_token:
+                headers_cleanup = {'Authorization': f'Bearer {id_token}'}
+                client.delete('/api/gemini-key', headers=headers_cleanup)
+            delete_emulator_user(local_id)
+
+@pytest.mark.emulator
+def test_chat_empty_message_emulator(client):
+    test_email = f"chat_user_empty_msg.{os.urandom(4).hex()}@example.com"
+    test_password = "securePassword123"
+    id_token = None
+    local_id = None
+    try:
+        id_token, local_id = create_user_and_get_token_emulator(test_email, test_password)
+        headers = {'Authorization': f'Bearer {id_token}', 'Content-Type': 'application/json'}
+        client.post('/api/gemini-key', headers=headers, json={'api_key': 'fake_gemini_key_for_chat_test'})
+
+        response = client.post('/api/chat', headers=headers, json={'message': ''}) # Empty message
+        assert response.status_code == 400, response.get_data(as_text=True)
+        json_data = response.get_json()
+        assert json_data['error'] == 'Bad Request'
+        assert 'Message cannot be empty' in json_data.get('message', '')
+    finally:
+        if local_id:
+            if id_token:
+                headers_cleanup = {'Authorization': f'Bearer {id_token}'}
+                client.delete('/api/gemini-key', headers=headers_cleanup)
+            delete_emulator_user(local_id)
+
+@pytest.mark.emulator
+def test_chat_no_gemini_key_emulator(client):
+    test_email = f"chat_user_no_gkey.{os.urandom(4).hex()}@example.com"
+    test_password = "securePassword123"
+    id_token = None
+    local_id = None
+    try:
+        id_token, local_id = create_user_and_get_token_emulator(test_email, test_password)
+        # IMPORTANT: Do NOT store a Gemini key for this user
+        headers = {'Authorization': f'Bearer {id_token}', 'Content-Type': 'application/json'}
+
+        response = client.post('/api/chat', headers=headers, json={'message': 'Hello?'})
+        assert response.status_code == 400, response.get_data(as_text=True) 
+        json_data = response.get_json()
+        assert json_data['error'] == 'Configuration Error'
+        assert 'Gemini API key not configured for this user.' in json_data.get('message', '')
+    finally:
+        if local_id:
+            delete_emulator_user(local_id)

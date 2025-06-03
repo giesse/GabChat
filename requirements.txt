@@ -6,6 +6,7 @@ autopep8
 flask
 firebase-admin
 requests
+google-generativeai
 
 # Testing
 pytest

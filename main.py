@@ -4,6 +4,7 @@ from firebase_admin import credentials, auth, firestore
 from firebase_admin.exceptions import FirebaseError
 from flask import Flask, send_file, request, jsonify
 from functools import wraps
+import google.generativeai as genai
 
 # Global variables for Firebase app and Firestore client
 fb_app = None
@@ -96,7 +97,7 @@ def store_gemini_key(current_user_uid):
     data = request.get_json()
     if not data or 'api_key' not in data:
         return jsonify({"error": "API key is missing in request body."}), 400
-    api_key = data['api_key'] # Corrected: was 'key'
+    api_key = data['api_key'] 
     if not isinstance(api_key, str) or not api_key.strip():
         return jsonify({"error": "API key must be a non-empty string."}), 400
     try:
@@ -117,12 +118,9 @@ def get_gemini_key(current_user_uid):
         doc_ref = db.collection('user_gemini_keys').document(current_user_uid)
         doc = doc_ref.get()
         if doc.exists:
-            # We only need to confirm if the key exists, not return its value.
-            # The document might be empty or api_key field might be missing if schema changes.
-            # For now, doc.exists is enough to say a key record has been made.
             return jsonify({"has_key": True}), 200
         else:
-            return jsonify({"has_key": False}), 200 # Key not found is a valid state, not an error for this check.
+            return jsonify({"has_key": False}), 200 
     except FirebaseError as e: 
         return jsonify({"error": "Failed to retrieve API key status from Firestore", "details": str(e)}), 500
     except Exception as e:
@@ -135,7 +133,7 @@ def delete_gemini_key(current_user_uid):
         return jsonify({"error": "Firestore client not available", "details": "DB is None."}), 500
     try:
         doc_ref = db.collection('user_gemini_keys').document(current_user_uid)
-        doc = doc_ref.get() # Check if doc exists before deleting
+        doc = doc_ref.get() 
         if doc.exists:
             doc_ref.delete()
             return jsonify({"status": "success", "message": "API key deleted successfully."}), 200
@@ -146,6 +144,48 @@ def delete_gemini_key(current_user_uid):
     except Exception as e:
         return jsonify({"error": "Unexpected error deleting API key", "details": str(e)}), 500
 
+@app.route("/api/chat", methods=["POST"])
+@token_required
+def chat_with_gemini(current_user_uid):
+    if not db:
+        return jsonify({"error": "Firestore client not available", "details": "DB is None."}), 500
+
+    data = request.get_json()
+    if not data or 'message' not in data:
+        return jsonify({"error": "Bad Request", "message": "Message is required."}), 400
+    
+    user_message = data['message']
+    if not user_message.strip():
+        return jsonify({"error": "Bad Request", "message": "Message cannot be empty."}), 400
+
+    try:
+        key_doc_ref = db.collection('user_gemini_keys').document(current_user_uid)
+        key_doc = key_doc_ref.get()
+        if not key_doc.exists:
+            return jsonify({"error": "Configuration Error", "message": "Gemini API key not configured for this user. Please set it up in the settings."}), 400
+        
+        gemini_api_key = key_doc.to_dict().get('api_key')
+        if not gemini_api_key:
+            return jsonify({"error": "Configuration Error", "message": "Gemini API key is missing or invalid in the database."}), 500
+
+        genai.configure(api_key=gemini_api_key)
+        model = genai.GenerativeModel('gemini-2.5-flash-preview-05-20') 
+        response = model.generate_content(user_message)
+        
+        return jsonify({"reply": response.text}), 200
+
+    except FirebaseError as e:
+        return jsonify({"error": "Firestore Error", "message": f"Failed to retrieve Gemini API key: {str(e)}"}), 500
+    except Exception as e:
+        # This will catch errors from genai.configure, GenerativeModel, or generate_content
+        # It's good practice to log the specific error `e` on the server for debugging.
+        print(f"Error during Gemini API interaction: {e}") # Log for server-side debugging
+        # Provide a more generic error to the client for security.
+        # Specific error messages (like from the Gemini SDK) might leak sensitive info.
+        if "API_KEY_INVALID" in str(e) or "API_KEY_SERVICE_BLOCKED" in str(e):
+             return jsonify({"error": "Gemini API Error", "message": "The Gemini API key is invalid or blocked. Please check your key and try again."}), 400
+        return jsonify({"error": "Gemini API Error", "message": "Failed to get response from AI. Please try again later."}), 500
+
 def run_flask_app():
     if os.getenv("FIREBASE_EMULATORS_EXEC_MODE") == "true":
       print("Running with Firebase Emulators (exec mode) - data will persist if configured.")
@@ -153,7 +193,6 @@ def run_flask_app():
       print(f"Running with Firestore emulator at {os.getenv('FIRESTORE_EMULATOR_HOST')}")
     
     port = int(os.environ.get('PORT', 8080))
-    # Respect FLASK_DEBUG environment variable for debug mode
     flask_debug = os.environ.get('FLASK_DEBUG', 'false').lower() in ['true', '1', 't']
     app.run(host='0.0.0.0', port=port, debug=flask_debug)
 
