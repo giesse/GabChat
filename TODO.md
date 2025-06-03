@@ -20,37 +20,40 @@
     *   Handle UI changes based on authentication status (e.g., show user info, logout button). (DONE)
 6.  **Gemini API Key Management:**
     *   ~~**Design a secure way for authenticated users to submit and store their Gemini API key.** This will likely involve creating a new database table/collection (e.g., in Firestore if you decide to use it) to associate API keys with user IDs.~~ (DONE - Used Firestore collection `user_gemini_keys` keyed by Firebase UID)
-    *   Create UI elements for users to input their API key after logging in.
-    *   ~~**Implement backend logic to save and retrieve the API key for the authenticated user.**~~ (DONE - Endpoints `POST, GET, DELETE /api/gemini-key` implemented in `main.py` using Firestore)
-7.  **Chat Interface:**
-    *   Develop the UI for users to type messages.
-    *   Implement backend logic (`main.py`) that:
+    *   ~~Create UI elements for users to input their API key after logging in.~~ (DONE)
+    *   ~~**Implement backend logic to save and retrieve the API key for the authenticated user.**~~ (DONE - Endpoints `POST, GET, DELETE /api/gemini-key` implemented in `main.py` using Firestore, `GET` returns `{"has_key": boolean}` an `DELETE` is also functional)
+    *   ~~**Gemini API Key Management (Frontend):** Implement UI for API key input in `src/index.html`. Implement JavaScript in `src/script.js` to send the API key to the backend (`POST /api/gemini-key`), retrieve/display its status (`GET /api/gemini-key`), and delete it (`DELETE /api/gemini-key`).~~ (DONE)
+7.  **Chat Interface:** (In Progress)
+    *   Develop the UI for users to type messages and display chat history in `src/index.html`.
+    *   Implement JavaScript in `src/script.js` to send messages to a new backend endpoint and display responses.
+    *   Implement a new backend endpoint in `main.py` that:
         *   Receives the user's message.
-        *   Retrieves the authenticated user's Gemini API key.
+        *   Retrieves the authenticated user's Gemini API key from Firestore.
         *   Makes a request to the Gemini API using the key and the message.
         *   Returns the AI's response to the frontend.
-        *   Display the chat history (user messages and AI responses) in the UI.
 8.  **Automated Testing:**
     *   **Backend Focus First:**
         *   Set up and configure the Firebase Emulator Suite (Auth, Firestore if used). (DONE - Emulator config, startup script, test dependencies added)
-        *   Develop backend unit/integration tests for `main.py` (especially `/verify-token` and API key logic). (DONE - `/verify-token` and API key management tests implemented and passing)
+        *   Develop backend unit/integration tests for `main.py` (especially `/verify-token` and API key logic). (DONE - `/verify-token` and API key management tests implemented and passing, updated for `has_key` logic)
     *   **(Future Task) Implement E2E UI tests:** For the authentication flow and core chat functionality using a framework like Playwright or Cypress.
 
 ## Next Immediate Tasks
 
-(Previously listed immediate tasks are all DONE)
+1.  **Chat Functionality:**
+    *   Develop the UI for users to type messages and display chat history in `src/index.html`.
+    *   Implement JavaScript in `src/script.js` to send messages to a new backend endpoint and display responses.
+    *   Implement a new backend endpoint in `main.py` that:
+        *   Receives the user's message.
+        *   Retrieves the authenticated user's Gemini API key from Firestore.
+        *   Makes a request to the Gemini API using the key and the message.
+        *   Returns the AI's response to the frontend.
 
-## Subsequent Tasks (Focus for next steps)
+## Subsequent Tasks (Beyond immediate focus)
 
-*   **Gemini API Key Management (Frontend):**
-    *   Implement UI for API key input in `src/index.html` (already has placeholder elements).
-    *   Implement JavaScript in `src/index.html` to send the API key to the backend (`POST /api/gemini-key`) and to retrieve/display it (`GET /api/gemini-key`).
-*   ~~**Gemini API Key Management (Backend):**~~
-    *   ~~Create backend endpoint in `main.py` to securely store API keys (e.g., associated with Firebase UID. Consider Firestore or other database).~~ (DONE - Using Firestore. Endpoints for POST, GET, DELETE `/api/gemini-key` are implemented and tested.)
-*   **Chat Functionality:**
-    *   Implement message sending from frontend to a new backend endpoint.
-    *   In the backend, retrieve the user's API key and use it to call the Gemini API.
-    *   Display chat messages (user and AI) in the `src/index.html` UI.
+*   Full Gemini API integration in the backend (if not fully covered by the immediate chat task).
+*   User session management (beyond simple token verification if needed).
+*   E2E UI tests.
+*   CI/CD Integration.
 
 ## Automated Testing - Detailed Plan
 
@@ -65,23 +68,24 @@
             *   ~~An invalid/expired ID token (mock `auth.verify_id_token()` to raise an exception).~~ (DONE)
             *   ~~No ID token.~~ (DONE)
         *   ~~Assert that the responses are correct (e.g., status codes, JSON payloads).~~ (DONE)
-    *   ~~**Test API key storage/retrieval endpoints (using Firestore Emulator):**~~ (DONE)
+    *   ~~**Test API key storage/retrieval/deletion endpoints (using Firestore Emulator):**~~ (DONE)
         *   ~~Test successful storage of an API key for an authenticated user.~~ (DONE)
-        *   ~~Test retrieval of an API key for an authenticated user.~~ (DONE)
-        *   ~~Test that unauthenticated users cannot store/retrieve keys.~~ (DONE)
+        *   ~~Test retrieval of an API key status for an authenticated user.~~ (DONE)
+        *   ~~Test that unauthenticated users cannot store/retrieve/delete keys.~~ (DONE)
         *   ~~Test that users cannot access other users' keys.~~ (DONE - Implicitly handled by UID-based storage)
         *   ~~Test deletion of API key for an authenticated user.~~ (DONE)
         *   ~~Test behavior when no key is stored (GET/DELETE).~~ (DONE)
     *   **Setup/Teardown:** ~~Use `pytest` fixtures to set up the Flask test client and any necessary mocks before each test.~~ (DONE - Fixture implemented and used, including Firebase Admin SDK re-initialization for emulators)
+    *   **(Future) Test new `/api/chat` endpoint.**
 
 ### 2. Frontend End-to-End (E2E) Tests (`tests/e2e`) - (Future Task)
 
-*   **Goal:** Test the complete user authentication flow from the UI perspective, interacting with the Firebase Auth Emulator.
+*   **Goal:** Test the complete user authentication flow and API key management from the UI perspective, interacting with the Firebase Auth Emulator.
 *   **Tools:** Playwright (recommended due to its robustness and auto-wait capabilities) or Cypress.
 *   **Steps:**
     *   **Install Playwright:** `npm install --save-dev playwright` (or Cypress equivalent).
     *   **Configure Frontend to use Auth Emulator:**
-        *   In `src/index.html`, modify the Firebase JavaScript SDK initialization. When running E2E tests (e.g., detected by an environment variable or a specific test build), configure `firebase.auth().useEmulator('http://localhost:9099');` (or your configured Auth emulator port).
+        *   In `src/index.html` or `src/script.js`, modify the Firebase JavaScript SDK initialization. When running E2E tests (e.g., detected by an environment variable or a specific test build), configure `firebase.auth().useEmulator('http://localhost:9099');` (or your configured Auth emulator port).
     *   **Test Scenarios:**
         *   **Successful Sign-In:**
             *   Launch the application.
@@ -90,7 +94,10 @@
             *   Verify UI updates: Sign-in button hidden, user info displayed, logout button visible, API key input section becomes available.
         *   **Logout:**
             *   Perform sign-in, click "Logout", verify UI reverts.
-        *   **(Future - When API Key input is implemented)** Test API key submission.
+        *   **API Key Operations (E2E):**
+            *   Test successful API key submission after sign-in.
+            *   Test API key status display.
+            *   Test API key deletion.
         *   **(Future - When Chat is implemented)** Test sending a message and receiving a response.
     *   **Helper Scripts:**
         *   A script to run E2E tests: `npx playwright test`.

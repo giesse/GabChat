@@ -179,7 +179,7 @@ def test_get_gemini_key_authenticated(client):
         client.post('/api/gemini-key', headers=headers, json={'api_key': TEST_GEMINI_API_KEY}) 
         response_get = client.get('/api/gemini-key', headers=headers)
         assert response_get.status_code == 200, response_get.get_data(as_text=True)
-        assert response_get.get_json() == {'api_key': TEST_GEMINI_API_KEY}
+        assert response_get.get_json() == {'has_key': True}
     finally:
         if local_id:
             if id_token:
@@ -205,8 +205,8 @@ def test_get_gemini_key_no_key_stored(client):
         id_token, local_id = create_user_and_get_token_emulator(test_email, test_password)
         headers = {'Authorization': f'Bearer {id_token}'}
         response_get = client.get('/api/gemini-key', headers=headers)
-        assert response_get.status_code == 404, response_get.get_data(as_text=True)
-        assert response_get.get_json() == {'error': 'API key not found.'}
+        assert response_get.status_code == 200, response_get.get_data(as_text=True)
+        assert response_get.get_json() == {'has_key': False}
     finally:
         if local_id:
             delete_emulator_user(local_id)
@@ -225,8 +225,8 @@ def test_delete_gemini_key_authenticated(client):
         assert response_delete.status_code == 200, response_delete.get_data(as_text=True)
         assert response_delete.get_json() == {'status': 'success', 'message': 'API key deleted successfully.'}
         response_get = client.get('/api/gemini-key', headers=headers) 
-        assert response_get.status_code == 404, response_get.get_data(as_text=True)
-        assert response_get.get_json() == {'error': 'API key not found.'}
+        assert response_get.status_code == 200, response_get.get_data(as_text=True)
+        assert response_get.get_json() == {'has_key': False}
     finally:
         if local_id:
             delete_emulator_user(local_id)

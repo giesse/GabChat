@@ -27,9 +27,13 @@
     </div>
 
     <div id="api-key-container" style="display: none;">
-        <h3>Enter your Gemini API Key</h3>
+        <h3>Enter/Update your Gemini API Key</h3>
         <input type="text" id="api-key-input" placeholder="Gemini API Key">
         <button id="save-api-key-button">Save Key</button>
+        <div id="api-key-status" style="margin-top: 10px;">
+            <!-- Status will be loaded here -->
+        </div>
+        <button id="delete-api-key-button" style="display: none; margin-top: 5px;">Delete Key</button>
     </div>
 
     <script type="module" src="script.js"></script>

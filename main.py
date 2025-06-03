@@ -92,11 +92,11 @@ def verify_token():
 @token_required
 def store_gemini_key(current_user_uid):
     if not db:
-        return jsonify({"error": "Firestore client not available. DB is None."}), 500
+        return jsonify({"error": "Firestore client not available", "details": "DB is None."}), 500
     data = request.get_json()
     if not data or 'api_key' not in data:
         return jsonify({"error": "API key is missing in request body."}), 400
-    api_key = data['api_key']
+    api_key = data['api_key'] # Corrected: was 'key'
     if not isinstance(api_key, str) or not api_key.strip():
         return jsonify({"error": "API key must be a non-empty string."}), 400
     try:
@@ -112,36 +112,39 @@ def store_gemini_key(current_user_uid):
 @token_required
 def get_gemini_key(current_user_uid):
     if not db:
-        return jsonify({"error": "Firestore client not available. DB is None."}), 500
+        return jsonify({"error": "Firestore client not available", "details": "DB is None."}), 500
     try:
         doc_ref = db.collection('user_gemini_keys').document(current_user_uid)
         doc = doc_ref.get()
         if doc.exists:
-            return jsonify(doc.to_dict()), 200
+            # We only need to confirm if the key exists, not return its value.
+            # The document might be empty or api_key field might be missing if schema changes.
+            # For now, doc.exists is enough to say a key record has been made.
+            return jsonify({"has_key": True}), 200
         else:
-            return jsonify({"error": "API key not found."}), 404
+            return jsonify({"has_key": False}), 200 # Key not found is a valid state, not an error for this check.
     except FirebaseError as e: 
-        return jsonify({"error": "Failed to retrieve API key from Firestore", "details": str(e)}), 500
+        return jsonify({"error": "Failed to retrieve API key status from Firestore", "details": str(e)}), 500
     except Exception as e:
-        return jsonify({"error": "Failed to retrieve API key", "details": str(e)}), 500
+        return jsonify({"error": "Unexpected error retrieving API key status", "details": str(e)}), 500
 
 @app.route("/api/gemini-key", methods=["DELETE"])
 @token_required
 def delete_gemini_key(current_user_uid):
     if not db:
-        return jsonify({"error": "Firestore client not available. DB is None."}), 500
+        return jsonify({"error": "Firestore client not available", "details": "DB is None."}), 500
     try:
         doc_ref = db.collection('user_gemini_keys').document(current_user_uid)
-        doc = doc_ref.get()
+        doc = doc_ref.get() # Check if doc exists before deleting
         if doc.exists:
             doc_ref.delete()
             return jsonify({"status": "success", "message": "API key deleted successfully."}), 200
         else:
-            return jsonify({"error": "API key not found to delete."}), 404
+            return jsonify({"error": "API key not found to delete."}), 404 
     except FirebaseError as e: 
         return jsonify({"error": "Failed to delete API key from Firestore", "details": str(e)}), 500
     except Exception as e:
-        return jsonify({"error": "Failed to delete API key", "details": str(e)}), 500
+        return jsonify({"error": "Unexpected error deleting API key", "details": str(e)}), 500
 
 def run_flask_app():
     if os.getenv("FIREBASE_EMULATORS_EXEC_MODE") == "true":
