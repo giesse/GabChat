@@ -7,7 +7,7 @@
   packages = [ pkgs.python3 pkgs.firebase-tools pkgs.jdk pkgs.nodejs pkgs.yarn pkgs.vite ];
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
-    extensions = [ "ms-python.python" ];
+    extensions = [ "ms-python.python"  "ms-python.debugpy"];
     workspace = {
       # Runs when a workspace is first created with this `dev.nix` file
       onCreate = {
