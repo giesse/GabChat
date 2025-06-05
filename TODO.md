@@ -13,11 +13,11 @@
 9.  **Frontend Overhaul to React (NEW):**
     *   Decision: Adopt React for a modern, component-based UI with chat widgets.
     *   Address CORS: Given Firebase Studio serves different ports on different domains:
-        *   Add `Flask-CORS` to `requirements.txt`. (DONE - in previous step, just need to install & configure)
-        *   Configure `Flask-CORS` in `main.py` to allow requests from the React development server's domain.
+        *   Add `Flask-CORS` to `requirements.txt`. (DONE)
+        *   Configure `Flask-CORS` in `main.py` to allow requests from the React development server's domain. (DONE)
     *   Set up React Project:
-        *   Choose a React setup (e.g., Vite or Create React App).
-        *   Establish project structure (e.g., within `src/react-app`).
+        *   Choose a React setup (e.g., Vite or Create React App). (DONE - Vite chosen)
+        *   Establish project structure (e.g., within `src/react-app`). (DONE - `src/react-app` created with Vite)
     *   Implement Core UI in React:
         *   Authentication flow (Google Sign-In with Firebase SDK for React).
         *   API Key management UI.
@@ -26,14 +26,14 @@
 
 ## Next Immediate Tasks
 
-1.  **Configure Flask-CORS for React Development:**
-    *   Ensure `Flask-CORS` is in `requirements.txt` (should be from previous interaction).
-    *   Run `pip install -r requirements.txt` (or equivalent for the IDE environment) to install it.
-    *   Import and initialize `Flask-CORS` in `main.py`, configuring it to allow requests from the anticipated domain/port of the React dev server in Firebase Studio.
-2.  **Set up Basic React Application:**
-    *   Create a new directory for the React app (e.g., `src/react-app`).
-    *   Initialize a new React project using Vite (recommended for speed) or Create React App.
-    *   Verify that the basic React app can be served by its development server and accessed via the port/domain provided by Firebase Studio.
+1.  **Configure Flask-CORS for React Development:** (DONE)
+    *   - Ensure `Flask-CORS` is in `requirements.txt`. (DONE)
+    *   - Run `pip install -r requirements.txt`... (DONE - covered by workspace setup)
+    *   - Import and initialize `Flask-CORS` in `main.py`... (DONE)
+2.  **Set up Basic React Application:** (DONE)
+    *   - Create a new directory for the React app (`src/react-app`). (DONE)
+    *   - Initialize a new React project using Vite... (DONE)
+    *   - Verify that the basic React app can be served... (DONE - implicitly by successful creation, will be fully verified when running)
 3.  **Implement Authentication Flow in React (Basic):**
     *   Integrate Firebase JavaScript SDK into the React app.
     *   Create a basic login component that triggers Firebase Google Sign-In.

@@ -3,6 +3,7 @@ import firebase_admin
 from firebase_admin import credentials, auth, firestore
 from firebase_admin.exceptions import FirebaseError
 from flask import Flask, send_file, request, jsonify
+from flask_cors import CORS
 from functools import wraps
 import google.generativeai as genai
 
@@ -45,6 +46,7 @@ def initialize_firebase():
         db = None
 
 app = Flask(__name__, static_folder='src', static_url_path='')
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 initialize_firebase()
 
 def token_required(f):
