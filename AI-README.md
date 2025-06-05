@@ -36,7 +36,7 @@ GabChat is a web application that allows users to authenticate using Firebase Go
 ## Key Technologies & Decisions
 
 *   **Backend:** Python, Flask, Google Generative AI (for Gemini - currently using `gemini-2.5-flash-preview-05-20`).
-*   **Frontend:** Currently vanilla HTML, CSS, JavaScript. Decision made to migrate to **React** for a modern, component-based UI with chat widgets.
+*   **Frontend:** Migrating from vanilla HTML/CSS/JavaScript to **React** (using Vite). Project located in `src/react-app`.
 *   **Authentication:** Firebase Authentication (Google Sign-In).
 *   **API Key Storage:** Firestore.
 *   **Testing:** `pytest` for backend. Firebase Emulators (Auth & Firestore) are used *only* for `pytest`.
@@ -53,6 +53,7 @@ GabChat is a web application that allows users to authenticate using Firebase Go
 
 *   **Virtual Environment:** Located at `.venv`. Activate with `source .venv/bin/activate`.
 *   **Python Dependencies:** Listed in `requirements.txt`. Install with `pip install -r requirements.txt`.
+*   **Node.js and Yarn:** Included in the Nix environment (`.idx/dev.nix`) for React development. Dependencies are installed via `yarn install` in the `src/react-app` directory during workspace setup.
 *   **Firebase Service Account Key:** For the local development server (`devserver.sh`) to connect to your real Firebase project, download your service account key JSON file from Firebase console (Project settings -> Service accounts -> Generate new private key) and save it as `firebase-service-account-key.json` in the root of this project.
 *   **Enable Cloud Firestore API:** For the local development server to function, ensure the Cloud Firestore API is enabled for your project in the Google Cloud Console: [https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=YOUR_PROJECT_ID](https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=YOUR_PROJECT_ID) (replace `YOUR_PROJECT_ID` with your actual Firebase project ID).
 *   **Firebase Emulators (for testing ONLY):**
@@ -64,8 +65,8 @@ GabChat is a web application that allows users to authenticate using Firebase Go
 ## Key File Locations
 
 *   **Main Flask App:** `main.py`
-*   **Frontend (Current Vanilla JS):** `src/index.html`, `src/script.js`, `src/style.css`
-*   **Frontend (Future React):** Likely `src/react-app` (or similar)
+*   **Frontend (Current Vanilla JS):** `src/index.html`, `src/script.js`, `src/style.css` (To be phased out)
+*   **Frontend (Future React):** `src/react-app` (Vite project)
 *   **Backend Tests:** `tests/backend/test_main.py`
 *   **TODO List:** `TODO.md`
 *   **Emulator Config:** `firebase.json`
@@ -76,11 +77,7 @@ GabChat is a web application that allows users to authenticate using Firebase Go
 
 ## Next Immediate Steps (Reflecting Frontend Overhaul Plan from TODO.md)
 
-1.  **Begin React Frontend Integration:**
-    *   Add `Flask-CORS` to `requirements.txt` and install it.
-    *   Configure `Flask-CORS` in `main.py` to allow requests from the React development server, especially considering Firebase Studio's multi-domain port forwarding.
-    *   Set up a basic React project structure (e.g., inside `src/react-app`).
-    *   Start re-implementing UI components in React.
+1.  **Begin React Frontend Implementation:** Set up basic React project (DONE). Start re-implementing UI components in React. Configure Flask-CORS (DONE).
 2.  **(Future Task) Implement E2E UI tests:** For the authentication flow, API key management, and core chat functionality using a framework like Playwright or Cypress (once React UI is more stable).
 3.  **(Future Task) Allow user to select Gemini model:** Implement UI and backend logic for model selection.
 
@@ -92,3 +89,5 @@ GabChat is a web application that allows users to authenticate using Firebase Go
 *   The `client_with_emulator_config` fixture in `tests/backend/test_main.py` is critical for ensuring Firebase Admin SDK in `main.py` uses the emulators during tests.
 *   The `google-generativeai` library has been added to `requirements.txt`.
 *   Frontend is being overhauled with React. This will involve running a React dev server (likely on a different port/domain in Firebase Studio) and the Flask server. CORS needs to be handled.
+*   `Flask-CORS` has been added and configured in `main.py`.
+*   The React app is in `src/react-app` and uses Vite. Run `yarn dev` within `src/react-app` to start the React dev server.
