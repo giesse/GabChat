@@ -22,7 +22,7 @@
         *   Authentication flow (Google Sign-In with Firebase SDK for React).
         *   API Key management UI.
         *   Chat interface (message display, input, sending messages).
-    *   Development Workflow: Ensure React dev server (with HMR) can run alongside Flask API server in Firebase Studio, handling separate domains.
+    *   Development Workflow: Ensure React dev server (with HMR) can run alongside Flask API server in Firebase Studio, handling separate domains. (DONE - `devserver.sh` now starts both, and CORS is configured)
 
 ## Next Immediate Tasks
 

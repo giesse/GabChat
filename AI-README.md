@@ -41,12 +41,14 @@ GabChat is a web application that allows users to authenticate using Firebase Go
 *   **API Key Storage:** Firestore.
 *   **Testing:** `pytest` for backend. Firebase Emulators (Auth & Firestore) are used *only* for `pytest`.
 *   **Development Server (`devserver.sh`):**
-    *   Uses `python -m flask run ...`.
-    *   Connects to the **real Firebase project**. Requires:
+    *   Starts both the Python Flask backend and the React (Vite) frontend development server.
+    *   The Flask server runs in the foreground on the `$PORT` specified by the environment (e.g., by Firebase Studio).
+    *   The React server (Vite) runs in the background. Its output (stdout & stderr) is logged to `react-dev-server.log` in the project root. Vite will typically choose its own port (e.g., 5173) and indicate this in its startup logs (viewable in `react-dev-server.log`).
+    *   Connects to the **real Firebase project** for backend operations. Requires:
         1.  `firebase-service-account-key.json` in the project root.
         2.  The "Cloud Firestore API" to be enabled in the Google Cloud Console for the Firebase project.
-    *   It does *not* use Firebase Emulators or `firebase emulators:exec`.
-*   **Firebase Studio Port Forwarding:** It's possible to expose multiple ports in Firebase Studio, each with a unique domain. This allows running a separate React development server (on a different port/domain than Flask) but necessitates **CORS configuration** on the Flask backend.
+    *   It does *not* use Firebase Emulators or `firebase emulators:exec` for the backend.
+*   **Firebase Studio Port Forwarding:** It's possible to expose multiple ports in Firebase Studio, each with a unique domain. This is now utilized by `devserver.sh` to run the React development server on its own port (e.g., 5173, separate from Flask's `$PORT`) and the Flask server. **CORS configuration** on the Flask backend is essential and already in place.
 *   **Automated Test Execution:** Tests are run with `source .venv/bin/activate && PYTHONPATH=. python -m pytest -v tests/backend`. Requires emulators to be running separately via `sh start-emulators.sh`.
 
 ## Development Environment Setup Notes
@@ -60,7 +62,9 @@ GabChat is a web application that allows users to authenticate using Firebase Go
     *   Configuration: `firebase.json` (Auth on port 9099, Firestore on port 8080, UI enabled).
     *   Start script: `start-emulators.sh` (starts Auth and Firestore). Should be run in a separate terminal *before running pytest*.
 *   **Running Backend Tests:** `source .venv/bin/activate && PYTHONPATH=. python -m pytest -v tests/backend`.
-*   **Running Local Dev Server:** `./devserver.sh` (or `FLASK_DEBUG=1 ./devserver.sh` for debug mode). Ensure `firebase-service-account-key.json` is present and Cloud Firestore API is enabled.
+*   **Running Local Dev Server:** Run `./devserver.sh`.
+    *   This script now starts both the Python Flask backend (foreground, on `$PORT`) and the React frontend dev server (background, typically on a port like 5173, logs to `react-dev-server.log`).
+    *   Ensure `firebase-service-account-key.json` is present in the project root and the Cloud Firestore API is enabled for your Firebase project for the backend to function correctly.
 
 ## Key File Locations
 
@@ -88,6 +92,8 @@ GabChat is a web application that allows users to authenticate using Firebase Go
 *   Remember the testing command: `source .venv/bin/activate && PYTHONPATH=. python -m pytest -v tests/backend`.
 *   The `client_with_emulator_config` fixture in `tests/backend/test_main.py` is critical for ensuring Firebase Admin SDK in `main.py` uses the emulators during tests.
 *   The `google-generativeai` library has been added to `requirements.txt`.
-*   Frontend is being overhauled with React. This will involve running a React dev server (likely on a different port/domain in Firebase Studio) and the Flask server. CORS needs to be handled.
-*   `Flask-CORS` has been added and configured in `main.py`.
-*   The React app is in `src/react-app` and uses Vite. Run `yarn dev` within `src/react-app` to start the React dev server.
+*   Frontend is being overhauled with React. The `devserver.sh` script now manages starting both the Flask backend and the React (Vite) frontend development server.
+*   The React dev server (Vite) runs in the background, and its output is logged to `react-dev-server.log` in the project root. It typically uses a port like 5173.
+*   The Flask server runs on the `$PORT` provided by the environment.
+*   `Flask-CORS` has been added and configured in `main.py` to allow communication between the frontend and backend servers.
+*   The React app is in `src/react-app`. While `devserver.sh` handles starting it, you can still manually run `yarn dev` within `src/react-app` for specific frontend debugging if needed, but be mindful of port conflicts if `devserver.sh` is also running.
