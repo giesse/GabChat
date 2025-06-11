@@ -12,3 +12,7 @@ This file archives tasks that have been completed.
 - **Automated Backend Testing:** (DONE)
 - **Configure Flask-CORS for React Development:** (DONE)
 - **Set up Basic React Application:** (DONE)
+- **Set up local development environment:** (DONE)
+    - Create a `.devcontainer` directory and `devcontainer.json` file.
+    - Create a `shell.nix` file to define the development environment.
+    - Update `docs/LocalSetup.md` with the new instructions.

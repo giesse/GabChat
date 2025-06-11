@@ -1,12 +1,5 @@
 # GabChat Project TODO
 
-## Local Development Environment Setup
-
-*   **Set up local development environment:**
-    *   Create a `.devcontainer` directory and `devcontainer.json` file.
-    *   Create a `shell.nix` file to define the development environment.
-    *   Update `docs/LocalSetup.md` with the new instructions.
-
 ## Frontend Overhaul to React
 
 *   **Implement Core UI in React:**
