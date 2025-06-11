@@ -1,2 +1,2 @@
 #!/bin/bash
-firebase emulators:start --only auth,firestore
+nix-shell --run "firebase emulators:start --only auth,firestore"

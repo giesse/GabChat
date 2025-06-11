@@ -31,7 +31,7 @@ For the application to connect to your Firebase project, you must perform the fo
 
 ## Running the Application
 
-Once inside the Dev Container, you can run the application using the provided scripts:
+Once inside the Dev Container, you can run the application using the provided scripts. These scripts now use `nix-shell --run` to ensure that the correct dependencies are used, so they can be run from any shell within the container.
 
 *   **Local Development Server:**
     ```bash

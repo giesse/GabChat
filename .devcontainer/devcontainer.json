@@ -11,20 +11,7 @@
         "ms-python.python",
         "ms-python.debugpy",
         "saoudrizwan.claude-dev"
-      ],
-      "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash",
-        "terminal.integrated.profiles.linux": {
-          "bash": {
-            "path": "/bin/bash",
-            "args": [
-              "-l",
-              "-c",
-              "nix-shell"
-            ]
-          }
-        }
-      }
+      ]
     }
   }
 }

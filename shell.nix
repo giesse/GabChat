@@ -12,5 +12,12 @@ pkgs.mkShell {
   ];
   shellHook = ''
     echo "Nix-shell environment for GabChat is ready."
+    # Activate Python virtual environment if it exists
+    if [ -d ".venv" ]; then
+      echo "Activating Python venv..."
+      source .venv/bin/activate
+    else
+      echo "Python venv not found. Please run the setup."
+    fi
   '';
 }
