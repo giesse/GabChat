@@ -16,3 +16,9 @@ This file archives tasks that have been completed.
     - Create a `.devcontainer` directory and `devcontainer.json` file.
     - Create a `shell.nix` file to define the development environment.
     - Update `docs/LocalSetup.md` with the new instructions.
+- **Simplify local development environment:** (DONE)
+    - Removed Nix and Python venv in favor of a standard devcontainer setup.
+    - Updated `.devcontainer/devcontainer.json`.
+    - Deleted `shell.nix`.
+    - Updated `docs/LocalSetup.md`.
+    - Updated `devserver.sh`, `run-tests.sh`, and `start-emulators.sh`.

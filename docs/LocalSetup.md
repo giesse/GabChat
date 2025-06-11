@@ -2,24 +2,20 @@
 
 This document provides instructions for setting up the local development environment for the GabChat project using VS Code Dev Containers.
 
-## Dev Container with Nix
+## Dev Container
 
-This project is configured to use a VS Code Dev Container, which creates a consistent and isolated development environment. It uses [Nix](https://nixos.org/) to manage all tools and dependencies.
+This project is configured to use a VS Code Dev Container, which creates a consistent and isolated development environment.
 
 ### How it Works
 
-*   **`.devcontainer/devcontainer.json`**: This file instructs VS Code how to create and configure the development container.
-*   **`shell.nix`**: This file tells the Nix package manager which packages to install in the environment (e.g., `python3`, `nodejs`, `yarn`, `vite`, `firebase-tools`).
+The **`.devcontainer/devcontainer.json`** file instructs VS Code how to create and configure the development container. It uses devcontainer features to install all necessary tools like Python, Node.js, and Firebase CLI directly into the container.
 
 ### Getting Started
 
 1.  **Open in VS Code:** When you open this project in VS Code, it will automatically detect the `.devcontainer` configuration.
 2.  **Reopen in Container:** A dialog will appear asking if you want to "Reopen in Container". Click it.
-3.  **Initial Setup:** The first time you open the container, it will build the environment and run the `postCreateCommand` defined in `devcontainer.json`. This command will:
-    *   Create a Python virtual environment at `.venv`.
-    *   Install the Python dependencies from `requirements.txt`.
-    *   Install the Node.js dependencies for the React app.
-4.  **Ready to Go:** Once the setup is complete, your VS Code terminal will be running inside a `nix-shell` within the container, which means all the necessary tools are available in the `PATH` automatically. The container is also configured to install the recommended VS Code extensions, including the Cline AI assistant.
+3.  **Initial Setup:** The first time you open the container, it will build the environment and run the `postCreateCommand` defined in `devcontainer.json`. This command will install both the Python and Node.js dependencies.
+4.  **Ready to Go:** Once the setup is complete, your VS Code terminal will be running inside the container, and all the necessary tools will be available in the `PATH` automatically. The container is also configured to install the recommended VS Code extensions, including the Cline AI assistant.
 
 ## Manual Configuration
 
@@ -31,7 +27,7 @@ For the application to connect to your Firebase project, you must perform the fo
 
 ## Running the Application
 
-Once inside the Dev Container, you can run the application using the provided scripts. These scripts now use `nix-shell --run` to ensure that the correct dependencies are used, so they can be run from any shell within the container.
+Once inside the Dev Container, you can run the application using the provided scripts.
 
 *   **Local Development Server:**
     ```bash

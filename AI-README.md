@@ -8,7 +8,7 @@ This document serves as a high-level summary and entry point for the AI assistan
 - If you are asked to perform a new task, update TODO.md first!
 - IMPORTANT! DON'T FORGET! When tasks are done, move them from TODO.md to DONE.md!
 - Also, after completing a task, make sure you commit the changes!
-- Note: Cline does not always list all the files in the project, if you can't find a file try running `ls -a` or `find`.
+- Note: Cline does not always list all the files in the project (eg. dot files are hidden, so you don't see .devcontainer/ etc.), if you can't find a file try running `ls -a` or `find`.
 
 ## Project Goal
 
