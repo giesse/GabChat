@@ -2,6 +2,12 @@
 
 This document serves as a high-level summary and entry point for the AI assistant to understand the GabChat project. For detailed information, please refer to the files in the `docs/` directory.
 
+## Important instructions for the AI assistant
+
+- Always keep the documentation up to date! This is your long term memory. Anything you learn needs to be stored in it so that you don't have to re-learn it every time, or ask me the same questions every time.
+- If you are asked to perform a new task, update TODO.md first!
+- When tasks are done, move them from TODO.md to DONE.md!
+
 ## Project Goal
 
 GabChat is a web application that allows users to authenticate using Firebase Google Sign-In and interact with a chat interface powered by a Large Language Model (LLM), using their own Gemini API key.
