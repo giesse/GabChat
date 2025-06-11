@@ -19,7 +19,7 @@ This project is configured to use a VS Code Dev Container, which creates a consi
     *   Create a Python virtual environment at `.venv`.
     *   Install the Python dependencies from `requirements.txt`.
     *   Install the Node.js dependencies for the React app.
-4.  **Ready to Go:** Once the setup is complete, your VS Code terminal will be running inside the container with all the necessary tools available in the PATH.
+4.  **Ready to Go:** Once the setup is complete, your VS Code terminal will be running inside a `nix-shell` within the container, which means all the necessary tools are available in the `PATH` automatically. The container is also configured to install the recommended VS Code extensions, including the Cline AI assistant.
 
 ## Manual Configuration
 
@@ -43,7 +43,7 @@ Once inside the Dev Container, you can run the application using the provided sc
     ```bash
     ./run-tests.sh
     ```
-    This script runs the backend `pytest` tests. *Note: This requires the Firebase emulators to be running.*
+    This script runs the backend `pytest` tests.
 
 *   **Firebase Emulators:**
     ```bash

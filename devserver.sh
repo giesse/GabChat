@@ -1,5 +1,4 @@
 #!/bin/sh
-source .venv/bin/activate
 
 # Start React dev server in the background
 cd src/react-app

@@ -9,14 +9,19 @@
     "vscode": {
       "extensions": [
         "ms-python.python",
-        "ms-python.debugpy"
+        "ms-python.debugpy",
+        "saoudrizwan.claude-dev"
       ],
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.defaultProfile.linux": "nix-shell",
         "terminal.integrated.profiles.linux": {
           "bash": {
             "path": "/bin/bash",
             "args": ["-l"]
+          },
+          "nix-shell": {
+            "path": "/bin/bash",
+            "args": ["-l", "-c", "nix-shell"]
           }
         }
       }
