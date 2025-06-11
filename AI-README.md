@@ -1,106 +1,31 @@
 # AI-README.md: GabChat Project Memory for Gemini Assistant
 
-This document serves as a persistent memory for the AI assistant to keep track of the GabChat project's status, key decisions, setup, and next steps between development sessions.
+This document serves as a high-level summary and entry point for the AI assistant to understand the GabChat project. For detailed information, please refer to the files in the `docs/` directory.
 
 ## Project Goal
 
 GabChat is a web application that allows users to authenticate using Firebase Google Sign-In and interact with a chat interface powered by a Large Language Model (LLM), using their own Gemini API key.
 
-## Current State (as of this session)
+## Documentation
 
-*   **Firebase Project:** Set up and configured. `firebase-service-account-key.json` is required in the root for the dev server to connect to the real Firebase project. The Cloud Firestore API must be enabled in the Google Cloud Console for the project.
-*   **Authentication:**
-    *   Google Sign-In is enabled in Firebase.
-    *   Frontend UI for "Sign in with Google" is implemented in `src/index.html` using the Firebase JavaScript SDK.
-    *   Backend `/verify-token` endpoint in `main.py` (Flask) verifies ID tokens using Firebase Admin SDK.
-*   **API Key Management (Backend & Frontend):**
-    *   Endpoints (`POST`, `GET`, `DELETE` for `/api/gemini-key`) are implemented in `main.py` and fully functional.
-    *   API keys are stored securely in **Firestore** (collection `user_gemini_keys`, document ID = Firebase UID).
-    *   The `GET /api/gemini-key` endpoint returns `{"has_key": boolean}`.
-    *   UI for API key input, status display, and deletion is implemented in `src/index.html` and `src/script.js` and is fully functional.
-    *   All frontend API key operations include the Firebase ID token for authorization and handle responses correctly.
-*   **Chat Functionality (Backend):**
-    *   The `/api/chat` endpoint is implemented in `main.py`.
-    *   It requires authentication, takes a user message, retrieves the user's Gemini API key from Firestore, interacts with the Gemini API (using model `gemini-2.5-flash-preview-05-20`), and returns the AI's response.
-    *   Error handling for missing messages, empty messages, and missing API keys is included.
-*   **Chat Functionality (Frontend):**
-    *   UI elements for chat (`chat-history`, `message-input`, `send-button`) are present in `src/index.html`.
-    *   `src/script.js` handles sending messages to `/api/chat`, displaying user messages and AI responses/errors in `chat-history`.
-    *   Event listeners for send button click and Enter key press are implemented.
-    *   Chat history is cleared on logout.
-*   **Automated Backend Testing:**
-    *   `pytest` is used for backend tests located in `tests/backend/test_main.py`.
-    *   All tests cover `/verify-token`, all `/api/gemini-key` CRUD operations, and the new `/api/chat` endpoint (including various scenarios like valid requests, unauthenticated access, missing/empty messages, and no Gemini key).
-    *   All backend tests are **PASSING** against Firebase Emulators.
+For detailed information about the project, please see the following documents:
 
-## Key Technologies & Decisions
+*   **[docs/Organization.md](docs/Organization.md):** An overview of how the project documentation is structured.
+*   **[docs/LocalSetup.md](docs/LocalSetup.md):** Instructions for setting up the local development environment.
+*   **[docs/Backend.md](docs/Backend.md):** Detailed information about the Python/Flask backend.
+*   **[docs/Frontend.md](docs/Frontend.md):** Information about the React-based frontend.
+*   **[docs/Testing.md](docs/Testing.md):** The project's testing strategy.
+*   **[docs/TODO.md](docs/TODO.md):** A list of pending tasks.
+*   **[docs/DONE.md](docs/DONE.md):** An archive of completed tasks.
 
-*   **Backend:** Python, Flask, Google Generative AI (for Gemini - currently using `gemini-2.5-flash-preview-05-20`).
-*   **Frontend:** Migrating from vanilla HTML/CSS/JavaScript to **React** (using Vite). Project located in `src/react-app`.
-*   **Authentication:** Firebase Authentication (Google Sign-In).
-*   **API Key Storage:** Firestore.
-*   **Testing:** `pytest` for backend. Firebase Emulators (Auth & Firestore) are used *only* for `pytest`.
-*   **Development Server (`devserver.sh`):**
-    *   Starts both the Python Flask backend and the React (Vite) frontend development server.
-    *   The Flask server runs in the foreground on the `$PORT` specified by the environment (e.g., by Firebase Studio).
-    *   The React server (Vite) runs in the background. Its output (stdout & stderr) is logged to `react-dev-server.log` in the project root. Vite will typically choose its own port (e.g., 5173) and indicate this in its startup logs (viewable in `react-dev-server.log`).
-    *   Connects to the **real Firebase project** for backend operations. Requires:
-        1.  `firebase-service-account-key.json` in the project root.
-        2.  The "Cloud Firestore API" to be enabled in the Google Cloud Console for the Firebase project.
-    *   It does *not* use Firebase Emulators or `firebase emulators:exec` for the backend.
-*   **Firebase Studio Port Forwarding:** It's possible to expose multiple ports in Firebase Studio, each with a unique domain. This is now utilized by `devserver.sh` to run the React development server on its own port (e.g., 5173, separate from Flask's `$PORT`) and the Flask server. **CORS configuration** on the Flask backend is essential and already in place.
-*   **Automated Test Execution:** Tests are run with `source .venv/bin/activate && PYTHONPATH=. python -m pytest -v tests/backend`. Requires emulators to be running separately via `sh start-emulators.sh`.
+## Key Technologies
 
-## Development Environment Setup Notes
+*   **Backend:** Python, Flask, Google Generative AI (Gemini)
+*   **Frontend:** React (Vite)
+*   **Authentication:** Firebase Authentication (Google Sign-In)
+*   **Database:** Firestore
+*   **Testing:** `pytest` for backend, Playwright/Cypress planned for E2E.
 
-*   **Virtual Environment:** Located at `.venv`. Activate with `source .venv/bin/activate`.
-*   **Python Dependencies:** Listed in `requirements.txt`. Install with `pip install -r requirements.txt`.
-*   **Node.js, Yarn, and Vite:** Included in the Nix environment (`.idx/dev.nix`) for React development. Dependencies are installed via `yarn install` in the `src/react-app` directory during workspace setup.
-*   **Firebase Service Account Key:** For the local development server (`devserver.sh`) to connect to your real Firebase project, download your service account key JSON file from Firebase console (Project settings -> Service accounts -> Generate new private key) and save it as `firebase-service-account-key.json` in the root of this project.
-*   **Enable Cloud Firestore API:** For the local development server to function, ensure the Cloud Firestore API is enabled for your project in the Google Cloud Console: [https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=YOUR_PROJECT_ID](https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=YOUR_PROJECT_ID) (replace `YOUR_PROJECT_ID` with your actual Firebase project ID).
-*   **Firebase Emulators (for testing ONLY):**
-    *   Configuration: `firebase.json` (Auth on port 9099, Firestore on port 8080, UI enabled).
-    *   Start script: `start-emulators.sh` (starts Auth and Firestore). Should be run in a separate terminal *before running pytest*.
-*   **Running Backend Tests:** `source .venv/bin/activate && PYTHONPATH=. python -m pytest -v tests/backend`.
-*   **Running Local Dev Server:** Run `./devserver.sh`.
-    *   This script now starts both the Python Flask backend (foreground, on `$PORT`) and the React frontend dev server (background, typically on a port like 5173, logs to `react-dev-server.log`).
-    *   Ensure `firebase-service-account-key.json` is present in the project root and the Cloud Firestore API is enabled for your Firebase project for the backend to function correctly.
+## Next Immediate Steps
 
-## Troubleshooting
-
-### vite: command not found
-
-*   **Description:** When trying to run the React development server (e.g., via `./devserver.sh` or manually with `yarn dev` in `src/react-app`), you might encounter an error message similar to "vite: command not found". This means the Vite executable is not available in your environment's PATH.
-*   **Solution:** The Vite package (`pkgs.vite`) was added to the `packages` list in the `.idx/dev.nix` file. If you pulled this change into an existing workspace, you might need to force a re-evaluation of the Nix environment. In Firebase Studio, you can try "Nix: Rebuild Environment" or restarting the workspace.
-
-## Key File Locations
-
-*   **Main Flask App:** `main.py`
-*   **Frontend (Current Vanilla JS):** `src/index.html`, `src/script.js`, `src/style.css` (To be phased out)
-*   **Frontend (Future React):** `src/react-app` (Vite project)
-*   **Backend Tests:** `tests/backend/test_main.py`
-*   **TODO List:** `TODO.md`
-*   **Emulator Config:** `firebase.json`
-*   **Emulator Start Script:** `start-emulators.sh`
-*   **Pytest Config:** `pytest.ini`
-*   **Python Dependencies:** `requirements.txt`
-*   **This AI Memory File:** `AI-README.md`
-
-## Next Immediate Steps (Reflecting Frontend Overhaul Plan from TODO.md)
-
-1.  **Begin React Frontend Implementation:** Set up basic React project (DONE). Start re-implementing UI components in React. Configure Flask-CORS (DONE).
-2.  **(Future Task) Implement E2E UI tests:** For the authentication flow, API key management, and core chat functionality using a framework like Playwright or Cypress (once React UI is more stable).
-3.  **(Future Task) Allow user to select Gemini model:** Implement UI and backend logic for model selection.
-
-## Notes for AI Assistant
-
-*   The Firebase Emulators (`sh start-emulators.sh`) are **only for running `pytest`**. They should be started before running tests.
-*   The local development server (`./devserver.sh`) connects to the **real Firebase project** and requires `firebase-service-account-key.json` in the project root and the Cloud Firestore API to be enabled. It does **not** use the emulators.
-*   Remember the testing command: `source .venv/bin/activate && PYTHONPATH=. python -m pytest -v tests/backend`.
-*   The `client_with_emulator_config` fixture in `tests/backend/test_main.py` is critical for ensuring Firebase Admin SDK in `main.py` uses the emulators during tests.
-*   The `google-generativeai` library has been added to `requirements.txt`.
-*   Frontend is being overhauled with React. The `devserver.sh` script now manages starting both the Flask backend and the React (Vite) frontend development server.
-*   The React dev server (Vite) runs in the background, and its output is logged to `react-dev-server.log` in the project root. It typically uses a port like 5173.
-*   The Flask server runs on the `$PORT` provided by the environment.
-*   `Flask-CORS` has been added and configured in `main.py` to allow communication between the frontend and backend servers.
-*   The React app is in `src/react-app`. While `devserver.sh` handles starting it, you can still manually run `yarn dev` within `src/react-app` for specific frontend debugging if needed, but be mindful of port conflicts if `devserver.sh` is also running.
+The primary focus is on completing the frontend migration to React. See **[docs/TODO.md](docs/TODO.md)** for specific tasks.
