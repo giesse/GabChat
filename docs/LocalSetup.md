@@ -1,45 +1,52 @@
 # Local Development Environment Setup
 
-## Planned Local Setup for Bluefin/Silverblue using Dev Containers
+This document provides instructions for setting up the local development environment for the GabChat project using VS Code Dev Containers.
 
-The following is the plan to set up a consistent and reproducible development environment on immutable operating systems like Fedora Bluefin/Silverblue.
+## Dev Container with Nix
 
-1.  **Dev Container with Nix:** We will use a VS Code Dev Container. This encapsulates the entire development environment, including all tools and dependencies, ensuring it works consistently everywhere and keeps the host system clean.
-2.  **Configuration Files:**
-    *   `.devcontainer/devcontainer.json`: This file will instruct VS Code how to create the development container. It will specify a container image that includes the Nix package manager.
-    *   `shell.nix`: This file will tell Nix which packages to provide inside the environment (e.g., `python3`, `nodejs`, `yarn`, `vite`, `firebase-tools`).
-3.  **Workflow:**
-    *   When the project is opened in VS Code, it will offer to "Reopen in Container".
-    *   Once inside the container, the terminal will automatically have access to all the tools defined in `shell.nix`.
-    *   This allows both the user and the AI assistant to run commands like `pip install` or `yarn dev` directly without any extra steps.
+This project is configured to use a VS Code Dev Container, which creates a consistent and isolated development environment. It uses [Nix](https://nixos.org/) to manage all tools and dependencies.
 
----
+### How it Works
 
-## Legacy Firebase Studio Setup
+*   **`.devcontainer/devcontainer.json`**: This file instructs VS Code how to create and configure the development container.
+*   **`shell.nix`**: This file tells the Nix package manager which packages to install in the environment (e.g., `python3`, `nodejs`, `yarn`, `vite`, `firebase-tools`).
 
-This document provides instructions for setting up the local development environment for the GabChat project.
+### Getting Started
 
-## Dependencies and Configuration
+1.  **Open in VS Code:** When you open this project in VS Code, it will automatically detect the `.devcontainer` configuration.
+2.  **Reopen in Container:** A dialog will appear asking if you want to "Reopen in Container". Click it.
+3.  **Initial Setup:** The first time you open the container, it will build the environment and run the `postCreateCommand` defined in `devcontainer.json`. This command will:
+    *   Create a Python virtual environment at `.venv`.
+    *   Install the Python dependencies from `requirements.txt`.
+    *   Install the Node.js dependencies for the React app.
+4.  **Ready to Go:** Once the setup is complete, your VS Code terminal will be running inside the container with all the necessary tools available in the PATH.
 
-*   **Virtual Environment:** Located at `.venv`. Activate with `source .venv/bin/activate`.
-*   **Python Dependencies:** Listed in `requirements.txt`. Install with `pip install -r requirements.txt`.
-*   **Node.js, Yarn, and Vite:** Included in the Nix environment (`.idx/dev.nix`) for React development. Dependencies are installed via `yarn install` in the `src/react-app` directory during workspace setup.
-*   **Firebase Service Account Key:** For the local development server (`devserver.sh`) to connect to your real Firebase project, download your service account key JSON file from Firebase console (Project settings -> Service accounts -> Generate new private key) and save it as `firebase-service-account-key.json` in the root of this project.
-*   **Enable Cloud Firestore API:** For the local development server to function, ensure the Cloud Firestore API is enabled for your project in the Google Cloud Console: [https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=YOUR_PROJECT_ID](https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=YOUR_PROJECT_ID) (replace `YOUR_PROJECT_ID` with your actual Firebase project ID).
+## Manual Configuration
+
+For the application to connect to your Firebase project, you must perform the following steps:
+
+1.  **Firebase Service Account Key:** Download your service account key from the Firebase console (**Project settings > Service accounts > Generate new private key**). Save the file as `firebase-service-account-key.json` in the root of this project.
+2.  **Enable Cloud Firestore API:** Ensure the Cloud Firestore API is enabled for your project in the Google Cloud Console. You can use this link, replacing `YOUR_PROJECT_ID` with your actual Firebase project ID:
+    [https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=YOUR_PROJECT_ID](https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=YOUR_PROJECT_ID)
 
 ## Running the Application
 
-*   **Firebase Emulators (for testing ONLY):**
-    *   Configuration: `firebase.json` (Auth on port 9099, Firestore on port 8080, UI enabled).
-    *   Start script: `start-emulators.sh` (starts Auth and Firestore). Should be run in a separate terminal *before running pytest*.
-*   **Running Backend Tests:** `source .venv/bin/activate && PYTHONPATH=. python -m pytest -v tests/backend`.
-*   **Running Local Dev Server:** Run `./devserver.sh`.
-    *   This script now starts both the Python Flask backend (foreground, on `$PORT`) and the React frontend dev server (background, typically on a port like 5173, logs to `react-dev-server.log`).
-    *   Ensure `firebase-service-account-key.json` is present in the project root and the Cloud Firestore API is enabled for your Firebase project for the backend to function correctly.
+Once inside the Dev Container, you can run the application using the provided scripts:
 
-## Troubleshooting
+*   **Local Development Server:**
+    ```bash
+    ./devserver.sh
+    ```
+    This script starts both the Python Flask backend and the React frontend development server.
 
-### vite: command not found
+*   **Backend Tests:**
+    ```bash
+    ./run-tests.sh
+    ```
+    This script runs the backend `pytest` tests. *Note: This requires the Firebase emulators to be running.*
 
-*   **Description:** When trying to run the React development server (e.g., via `./devserver.sh` or manually with `yarn dev` in `src/react-app`), you might encounter an error message similar to "vite: command not found". This means the Vite executable is not available in your environment's PATH.
-*   **Solution:** The Vite package (`pkgs.vite`) was added to the `packages` list in the `.idx/dev.nix` file. If you pulled this change into an existing workspace, you might need to force a re-evaluation of the Nix environment. In Firebase Studio, you can try "Nix: Rebuild Environment" or restarting the workspace.
+*   **Firebase Emulators:**
+    ```bash
+    ./start-emulators.sh
+    ```
+    This script starts the Firebase Auth and Firestore emulators for local testing. It should be run in a separate terminal before executing the tests.
