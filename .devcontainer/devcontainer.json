@@ -13,15 +13,15 @@
         "saoudrizwan.claude-dev"
       ],
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "nix-shell",
+        "terminal.integrated.defaultProfile.linux": "bash",
         "terminal.integrated.profiles.linux": {
           "bash": {
             "path": "/bin/bash",
-            "args": ["-l"]
-          },
-          "nix-shell": {
-            "path": "/bin/bash",
-            "args": ["-l", "-c", "nix-shell"]
+            "args": [
+              "-l",
+              "-c",
+              "nix-shell"
+            ]
           }
         }
       }
