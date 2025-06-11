@@ -1,5 +1,22 @@
 # Local Development Environment Setup
 
+## Planned Local Setup for Bluefin/Silverblue using Dev Containers
+
+The following is the plan to set up a consistent and reproducible development environment on immutable operating systems like Fedora Bluefin/Silverblue.
+
+1.  **Dev Container with Nix:** We will use a VS Code Dev Container. This encapsulates the entire development environment, including all tools and dependencies, ensuring it works consistently everywhere and keeps the host system clean.
+2.  **Configuration Files:**
+    *   `.devcontainer/devcontainer.json`: This file will instruct VS Code how to create the development container. It will specify a container image that includes the Nix package manager.
+    *   `shell.nix`: This file will tell Nix which packages to provide inside the environment (e.g., `python3`, `nodejs`, `yarn`, `vite`, `firebase-tools`).
+3.  **Workflow:**
+    *   When the project is opened in VS Code, it will offer to "Reopen in Container".
+    *   Once inside the container, the terminal will automatically have access to all the tools defined in `shell.nix`.
+    *   This allows both the user and the AI assistant to run commands like `pip install` or `yarn dev` directly without any extra steps.
+
+---
+
+## Legacy Firebase Studio Setup
+
 This document provides instructions for setting up the local development environment for the GabChat project.
 
 ## Dependencies and Configuration
