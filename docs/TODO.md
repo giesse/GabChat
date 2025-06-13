@@ -2,6 +2,12 @@
 
 ## Frontend Overhaul to React
 
+*   [Improve React UI](tasks/2025-06-13-improve-react-ui.md)
+
+## Backend
+
+*   [Implement Streaming Backend](tasks/2025-06-13-implement-streaming-backend.md)
+
 
 
 ## Subsequent Tasks

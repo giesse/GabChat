@@ -47,6 +47,16 @@ For detailed information about the project, please see the following documents:
 *   **[docs/TODO.md](docs/TODO.md):** A list of pending tasks.
 *   **[docs/DONE.md](docs/DONE.md):** An archive of completed tasks.
 
+## Current Project Status (as of 2025-06-13)
+
+The project is in the process of migrating its frontend from a legacy vanilla JavaScript implementation to a modern React application.
+
+*   **Backend:** The Python/Flask backend is **complete and tested**. It provides endpoints for user authentication, API key management, and chat functionality. For details, see `docs/Backend.md`.
+
+*   **Frontend (React):** The new React frontend has a **complete authentication flow**. Users can sign in and out using their Google accounts. The basic component structure is in place.
+
+*   **Immediate Goal:** The next step is to build the React components for **API Key Management** and the **Chat Interface**, connecting them to the existing, functional backend endpoints.
+
 ## Key Technologies
 
 *   **Backend:** Python, Flask, Google Generative AI (Gemini)

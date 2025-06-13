@@ -29,4 +29,5 @@ The project is currently undergoing a migration from a vanilla HTML/CSS/JavaScri
 
 *   **Main React App Component:** `src/react-app/src/App.jsx`
 *   **Vite Configuration:** `src/react-app/vite.config.js`
+*   **Package Manager:** `yarn` is the preferred package manager for this project. All new dependencies should be added using `yarn add [package-name]`.
 *   **Package Management:** `src/react-app/package.json`
