@@ -22,3 +22,5 @@ This file archives tasks that have been completed.
     - Deleted `shell.nix`.
     - Updated `docs/LocalSetup.md`.
     - Updated `devserver.sh`, `run-tests.sh`, and `start-emulators.sh`.
+- Local environment setup
+    - Fixed devcontainer build and dependency installation issues by switching to a pre-built Python image.

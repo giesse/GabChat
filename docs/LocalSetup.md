@@ -10,6 +10,8 @@ This project is configured to use a VS Code Dev Container, which creates a consi
 
 The **`.devcontainer/devcontainer.json`** file instructs VS Code how to create and configure the development container. It uses devcontainer features to install all necessary tools like Python, Node.js, and Firebase CLI directly into the container.
 
+> **Note:** The configuration includes the `java` feature, which is required for the Firebase Emulators to run correctly.
+
 ### Getting Started
 
 1.  **Open in VS Code:** When you open this project in VS Code, it will automatically detect the `.devcontainer` configuration.

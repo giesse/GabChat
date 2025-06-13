@@ -1,4 +1,4 @@
-.venv
 firebase-service-account-key.json
 __pycache__
+.pytest_cache
 *.log
