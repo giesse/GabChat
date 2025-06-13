@@ -27,3 +27,6 @@ This file archives tasks that have been completed.
 - **Split devserver.sh into start-flask.sh and start-vite.sh:** (DONE)
 - **Fixed Vite connection issue:** (DONE)
     - Configured Vite to listen on all network interfaces to work with VSCode's port forwarding.
+- **Resolved Local Setup Issues:** (DONE)
+    - Fixed Firebase Google Sign-In on localhost by adding a `signInWithPopup` option.
+    - Cleared VSCode terminal state to resolve the "Reactivating terminals..." hang.

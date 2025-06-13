@@ -1,6 +1,6 @@
 // Import functions from the Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,6 +19,7 @@ console.log("Firebase Auth initialized.");
 
 // DOM Elements
 const googleSignInButton = document.getElementById('google-signin-button');
+const googleSignInPopupButton = document.getElementById('google-signin-popup-button');
 const logoutButton = document.getElementById('logout-button');
 const apiKeyInput = document.getElementById('api-key-input');
 const saveApiKeyButton = document.getElementById('save-api-key-button');
@@ -276,7 +277,7 @@ getRedirectResult(auth)
         console.error("Error message (getRedirectResult):", error.message);
     });
 
-// Google Sign-In button listener
+// Google Sign-In button listener (Redirect)
 if (googleSignInButton) {
     googleSignInButton.addEventListener('click', () => {
         console.log("Google Sign-In button clicked (redirect method).");
@@ -285,6 +286,34 @@ if (googleSignInButton) {
         signInWithRedirect(auth, provider)
             .catch((error) => {
                 console.error("Error initiating signInWithRedirect:", error);
+            });
+    });
+}
+
+// Google Sign-In button listener (Popup)
+if (googleSignInPopupButton) {
+    googleSignInPopupButton.addEventListener('click', () => {
+        console.log("Google Sign-In button clicked (popup method).");
+        const provider = new GoogleAuthProvider();
+        console.log("Provider created (popup method):", provider);
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                // The signed-in user info.
+                const user = result.user;
+                console.log("Sign-in successful (popup method):", user);
+                // The onAuthStateChanged listener will handle the UI updates.
+            }).catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.customData.email;
+                // The AuthCredential type that was used.
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                console.error("Error with signInWithPopup:", errorCode, errorMessage);
             });
     });
 }
