@@ -30,3 +30,4 @@ This file archives tasks that have been completed.
 - **Resolved Local Setup Issues:** (DONE)
     - Fixed Firebase Google Sign-In on localhost by adding a `signInWithPopup` option.
 - **Fix VSCode Hanging Issue:** [Fix VSCode Hanging Issue](tasks/2025-06-13-fix-vscode-hanging-issue.md) (DONE)
+- **Implement Core React UI (Authentication):** See [docs/tasks/2025-06-13-implement-react-ui.md](tasks/2025-06-13-implement-react-ui.md) for details. (DONE)

@@ -2,10 +2,6 @@
 
 ## Frontend Overhaul to React
 
-*   **Implement Core UI in React:**
-    *   Authentication flow (Google Sign-In with Firebase SDK for React).
-    *   API Key management UI.
-    *   Chat interface (message display, input, sending messages).
 
 ## Subsequent Tasks
 
