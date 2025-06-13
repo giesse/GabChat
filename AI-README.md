@@ -2,13 +2,34 @@
 
 This document serves as a high-level summary and entry point for the AI assistant to understand the GabChat project. For detailed information, please refer to the files in the `docs/` directory.
 
-## Important instructions for the AI assistant
+# AI Assistant Workflow
 
-- Always keep the documentation up to date! This is your long term memory. Anything you learn needs to be stored in it so that you don't have to re-learn it every time, or ask me the same questions every time.
-- If you are asked to perform a new task, update TODO.md first!
-- IMPORTANT! DON'T FORGET! When tasks are done, move them from TODO.md to DONE.md!
-- Also, after completing a task, make sure you commit the changes!
-- Note: Cline does not always list all the files in the project (eg. dot files are hidden, so you don't see .devcontainer/ etc.), if you can't find a file try running `ls -a` or `find`.
+To ensure a reliable and traceable workflow, please follow these steps for every task:
+
+1.  **Acknowledge & Plan:**
+    *   Thoroughly understand the assigned task.
+    *   Create a new task documentation file in `docs/tasks/YYYY-MM-DD-brief-task-description.md`.
+    *   In this file, outline your plan, including the files you'll modify and the steps you'll take. This file will serve as our persistent context for the task.
+
+2.  **Update `TODO.md`:**
+    *   Add a new entry to `docs/TODO.md` that links to the new task document.
+
+3.  **Implement:**
+    *   Execute the plan by creating or modifying the necessary files.
+    *   Keep the task document updated with your actions and any important observations.
+
+4.  **Verify:**
+    *   Once you believe the task is complete, describe how I can verify the changes (e.g., by running specific tests, checking a feature in the browser, etc.).
+    *   Wait for my confirmation that the task is verified.
+
+5.  **Finalize:**
+    *   After I have verified the task, move the entry from `docs/TODO.md` to `docs/DONE.md`.
+    *   Commit the changes with a clear and descriptive commit message.
+
+## Important Notes
+
+*   **File System:** The file tree provided is not always complete. To see all files, including hidden ones, you can use the `ls -aR` command.
+*   **Task Context:** The `docs/` directory is our shared memory. It is essential for resuming tasks and understanding our project history.
 
 ## Project Goal
 

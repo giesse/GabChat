@@ -29,4 +29,4 @@ This file archives tasks that have been completed.
     - Configured Vite to listen on all network interfaces to work with VSCode's port forwarding.
 - **Resolved Local Setup Issues:** (DONE)
     - Fixed Firebase Google Sign-In on localhost by adding a `signInWithPopup` option.
-    - Cleared VSCode terminal state to resolve the "Reactivating terminals..." hang.
+- **Fix VSCode Hanging Issue:** [Fix VSCode Hanging Issue](tasks/2025-06-13-fix-vscode-hanging-issue.md) (DONE)
