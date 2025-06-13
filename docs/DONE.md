@@ -24,3 +24,6 @@ This file archives tasks that have been completed.
     - Updated `devserver.sh`, `run-tests.sh`, and `start-emulators.sh`.
 - Local environment setup
     - Fixed devcontainer build and dependency installation issues by switching to a pre-built Python image.
+- **Split devserver.sh into start-flask.sh and start-vite.sh:** (DONE)
+- **Fixed Vite connection issue:** (DONE)
+    - Configured Vite to listen on all network interfaces to work with VSCode's port forwarding.
