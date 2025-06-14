@@ -1,10 +1,5 @@
 # GabChat Project TODO
 
-## Frontend Overhaul to React
-
-* The "Sign Out" item in the menu doesn't work (can't click on it)
-* Let's use the user profile picture for the user menu instead of a button with the user full name
-
 ## Backend
 
 *   [Implement Streaming Backend](tasks/2025-06-13-implement-streaming-backend.md)

@@ -38,3 +38,5 @@ This file archives tasks that have been completed.
     *   Update favicon to match the original application.
     *   Relocate user menu to the top-right corner.
     *   Improve chat component look for better usability
+* The "Sign Out" item in the menu doesn't work (can't click on it)
+* Let's use the user profile picture for the user menu instead of a button with the user full name
