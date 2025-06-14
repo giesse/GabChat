@@ -14,7 +14,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "saoudrizwan.claude-dev"
+        "RooVeterinaryInc.roo-cline"
       ]
     }
   }
