@@ -50,33 +50,35 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>GabChat</h1>
-        {currentUser ? (
-          <UserMenu
-            user={currentUser}
-            onEditApiKey={() => setIsApiKeyModalOpen(true)}
-          />
-        ) : (
-          <SignIn />
-        )}
-      </header>
-      {currentUser && (
-        <main>
-          {hasApiKey ? (
-            <Chat user={currentUser} />
+      <div className="app-container">
+        <header className="App-header">
+          <h1>GabChat</h1>
+          {currentUser ? (
+            <UserMenu
+              user={currentUser}
+              onEditApiKey={() => setIsApiKeyModalOpen(true)}
+            />
           ) : (
-            <h2>Welcome, {currentUser.displayName}</h2>
+            <SignIn />
           )}
-        </main>
-      )}
-      {isApiKeyModalOpen && (
-        <ApiKeyModal
-          user={currentUser}
-          onClose={() => setIsApiKeyModalOpen(false)}
-          onSave={handleApiKeySaved}
-        />
-      )}
+        </header>
+        {currentUser && (
+          <main>
+            {hasApiKey ? (
+              <Chat user={currentUser} />
+            ) : (
+              <h2>Welcome, {currentUser.displayName}</h2>
+            )}
+          </main>
+        )}
+        {isApiKeyModalOpen && (
+          <ApiKeyModal
+            user={currentUser}
+            onClose={() => setIsApiKeyModalOpen(false)}
+            onSave={handleApiKeySaved}
+          />
+        )}
+      </div>
     </div>
   );
 }

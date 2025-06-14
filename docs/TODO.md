@@ -3,6 +3,10 @@
 ## Frontend Overhaul to React
 
 *   [Improve React UI](tasks/2025-06-13-improve-react-ui.md)
+    *   Fix application layout to use full window space.
+    *   Update favicon to match the original application.
+    *   Relocate user menu to the top-right corner.
+    *   Redesign chat input for better usability.
 
 ## Backend
 
