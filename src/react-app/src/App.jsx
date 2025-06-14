@@ -63,7 +63,7 @@ function App() {
           )}
         </header>
         {currentUser && (
-          <main>
+          <main className='chat-container'>
             {hasApiKey ? (
               <Chat user={currentUser} />
             ) : (

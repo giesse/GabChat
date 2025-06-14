@@ -25,7 +25,24 @@ const Chat = ({ user }) => {
     return data.reply;
   });
 
-  return <AiChat adapter={adapter} />;
+  const personaOptions = {
+    assistant: {
+      name: 'GabChat',
+      avatar: '/robot-svgrepo-com.svg'
+    },
+    user: {
+      name: user.displayName,
+      avatar: user.photoURL
+    }
+  };
+
+  return (
+    <AiChat
+      adapter={adapter}
+      personaOptions={personaOptions}
+      displayOptions={{ themeId: 'nova' }}
+    />
+  );
 };
 
 export default Chat;

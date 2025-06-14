@@ -2,11 +2,8 @@
 
 ## Frontend Overhaul to React
 
-*   [Improve React UI](tasks/2025-06-13-improve-react-ui.md)
-    *   Fix application layout to use full window space.
-    *   Update favicon to match the original application.
-    *   Relocate user menu to the top-right corner.
-    *   Redesign chat input for better usability.
+* The "Sign Out" item in the menu doesn't work (can't click on it)
+* Let's use the user profile picture for the user menu instead of a button with the user full name
 
 ## Backend
 

@@ -33,3 +33,8 @@ This file archives tasks that have been completed.
 - **Implement Core React UI (Authentication):** See [docs/tasks/2025-06-13-implement-react-ui.md](tasks/2025-06-13-implement-react-ui.md) for details. (DONE)
 - **Update Google Sign-In Button:** [Update Google Sign-In Button](tasks/2025-06-13-update-google-signin-button.md) (DONE)
 - **Fix CSS Warnings in SignIn.css:** [Fix CSS Warnings in SignIn.css](tasks/2025-06-13-fix-css-user-select-warning.md) (DONE)
+- [Improve React UI](tasks/2025-06-13-improve-react-ui.md) (Mostly done)
+    *   Fix application layout to use full window space.
+    *   Update favicon to match the original application.
+    *   Relocate user menu to the top-right corner.
+    *   Improve chat component look for better usability
