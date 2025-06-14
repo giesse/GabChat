@@ -5,10 +5,10 @@ import './UserMenu.css';
 
 const UserMenu = ({ user, onEditApiKey }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { signOut } = useAuth();
+  const { signout } = useAuth();
 
   const handleSignOut = () => {
-    signOut();
+    signout();
     setIsOpen(false);
   };
 
@@ -19,9 +19,12 @@ const UserMenu = ({ user, onEditApiKey }) => {
 
   return (
     <div className="user-menu">
-      <button onClick={() => setIsOpen(!isOpen)} className="user-menu-button">
-        {user.displayName || 'User'}
-      </button>
+      <img
+        src={user.photoURL}
+        alt="User profile"
+        onClick={() => setIsOpen(!isOpen)}
+        className="user-profile-picture"
+      />
       {isOpen && (
         <div className="user-menu-dropdown">
           <ul>
